@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Panel;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
@@ -16,12 +17,22 @@ import javax.swing.border.AbstractBorder;
 import common.CommonUtil;
 
 public class Main extends JFrame{
-	Image background=new ImageIcon(Main.class.getResource("../img/메인화면.png")).getImage();
     Font buttonFont = new Font("Noto Sans KR", Font.BOLD, 20);
     public Main() {
-    	//프레임 속성 설정
     	// 시작기본세팅 메서드
     	CommonUtil.settings(this);
+    	//배경 패널 생성
+		 Panel p = new Panel() {
+			Image background=new ImageIcon(Main.class.getResource("../img/메인화면.png")).getImage();
+			public void paint(Graphics g) {
+				g.drawImage(background,0,0,null);
+				
+			}
+		};
+
+	    
+		p.setBounds(0,0,750,500);
+		p.setLayout(null);
 		
 		//버튼 생성
 		JButton rankingBtn = new JButton ("랭킹보기");
@@ -29,9 +40,9 @@ public class Main extends JFrame{
 		JButton explanBtn = new JButton("게임설명");
 		
 		//버튼 좌표 및 크기 설정
-		rankingBtn.setBounds(106,350, 170, 45);
-		gamestartBtn.setBounds(291,350, 170, 45);
-		explanBtn.setBounds(476,350, 170, 45);
+		rankingBtn.setBounds(106,370, 170, 45);
+		gamestartBtn.setBounds(291,370, 170, 45);
+		explanBtn.setBounds(476,370, 170, 45);
 		
 		//버튼 배경 색 설정
 		rankingBtn.setBackground(new Color(255,255,255));
@@ -48,25 +59,27 @@ public class Main extends JFrame{
 		gamestartBtn.setBorder(new RoundBorder(30));
 		explanBtn.setBorder(new RoundBorder(30));
 		
-		
 		//버튼 폰트 설정
 		rankingBtn.setFont(buttonFont);
 		gamestartBtn.setFont(buttonFont);
 		explanBtn.setFont(buttonFont);
 		
-		//버튼 프레임에 추가
-		getContentPane().add(rankingBtn);
-		getContentPane().add(gamestartBtn);
-		getContentPane().add(explanBtn);
-
+	
+		//패널에 버튼 붙이기
+		p.add(rankingBtn);
+		p.add(gamestartBtn);
+		p.add(explanBtn);
+		
+		//프레임에 패널 붙이기
+		this.add(p);
 		setVisible(true);
+
 	}
-	public void paint(Graphics g) {
-		g.drawImage(background, 0, 0, null);
-	}
+
 	public static void main(String[] args) {
 		new Main();
 	}
+
 }
 
 //버튼 테두리 둥글게 만드는 클래스
