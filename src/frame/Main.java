@@ -13,16 +13,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.border.AbstractBorder;
 
+import common.CommonUtil;
+
 public class Main extends JFrame{
 	Image background=new ImageIcon(Main.class.getResource("../img/메인화면.png")).getImage();
     Font buttonFont = new Font("Noto Sans KR", Font.BOLD, 20);
     public Main() {
     	//프레임 속성 설정
-		setTitle("CatchYouCatchMe");
-		setSize(750,500);
-		setResizable(false);
-		setLocationRelativeTo(null);
-		setLayout(null);
+    	// 시작기본세팅 메서드
+    	CommonUtil.settings(this);
 		
 		//버튼 생성
 		JButton rankingBtn = new JButton ("랭킹보기");
@@ -61,7 +60,6 @@ public class Main extends JFrame{
 		getContentPane().add(explanBtn);
 
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	public void paint(Graphics g) {
 		g.drawImage(background, 0, 0, null);
