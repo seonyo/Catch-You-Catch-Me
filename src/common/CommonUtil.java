@@ -2,9 +2,19 @@ package common;
 
 import java.awt.Container;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class CommonUtil {
+	
+	public static void settings(JFrame f) {
+		f.setSize(750,500);								
+		f.setResizable(false);
+		f.setTitle("CatchYouCatchMe");			
+		f.setLayout(null);
+		f.setLocationRelativeTo(null);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 	
 	// 확인 창
 	public static void infoMsg(Container container, String msg) {
