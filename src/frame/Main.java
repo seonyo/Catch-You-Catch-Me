@@ -5,32 +5,33 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Panel;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.border.AbstractBorder;
 
 import common.CommonUtil;
 
 public class Main extends JFrame{
     Font buttonFont = new Font("Noto Sans KR", Font.BOLD, 20);
+    Image background = new ImageIcon(Main.class.getResource("../img/메인화면.png")).getImage();
     public Main() {
     	// 시작기본세팅 메서드
     	CommonUtil.settings(this);
+    	
     	//배경 패널 생성
-		 Panel p = new Panel() {
-			Image background=new ImageIcon(Main.class.getResource("../img/메인화면.png")).getImage();
-			public void paint(Graphics g) {
-				g.drawImage(background,0,0,null);
-				
-			}
-		};
-
-	    
+        JPanel p = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(background, 0, 0, null);
+            }
+        };
+        
 		p.setBounds(0,0,750,500);
 		p.setLayout(null);
 		
@@ -71,15 +72,15 @@ public class Main extends JFrame{
 		p.add(explanBtn);
 		
 		//프레임에 패널 붙이기
-		this.add(p);
+		add(p);
 		setVisible(true);
-
+		repaint();
 	}
-
+    
 	public static void main(String[] args) {
 		new Main();
 	}
-
+	
 }
 
 //버튼 테두리 둥글게 만드는 클래스
