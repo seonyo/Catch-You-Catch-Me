@@ -10,6 +10,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.ImageIcon;
@@ -23,6 +25,7 @@ import common.CommonUtil;
 public class Main extends JFrame{
     Font buttonFont = new Font("Noto Sans KR", Font.BOLD, 20);
     Image background = new ImageIcon(Main.class.getResource("../img/메인화면.png")).getImage();
+	
     public Main() {
     	// 시작기본세팅 메서드
     	CommonUtil.settings(this);
@@ -70,7 +73,6 @@ public class Main extends JFrame{
 		gamestartBtn.setFont(buttonFont);
 		explanBtn.setFont(buttonFont);
 		
-	
 		//패널에 버튼 붙이기
 		p.add(rankingBtn);
 		p.add(gamestartBtn);
@@ -79,9 +81,21 @@ public class Main extends JFrame{
 		//프레임에 패널 붙이기
 		add(p);
 		setVisible(true);
-		repaint();
+		
+		rankingBtn.addActionListener(event ->{
+			dispose();
+			new Result();
+		});
+		gamestartBtn.addActionListener(event ->{
+			dispose();
+			new GameReady();
+		});
+		explanBtn.addActionListener(event ->{
+			dispose();
+			new GameExplan();
+		});
 	}
-    
+
 	public static void main(String[] args) {
 		new Main();
 	}
