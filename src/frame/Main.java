@@ -1,10 +1,14 @@
 package frame;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
@@ -27,7 +31,7 @@ public class Main extends JFrame{
         JPanel p = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
+                super.paintComponent(g); // JPanel의 paintComponent() 메소드 호출
                 g.drawImage(background, 0, 0, null);
             }
         };
@@ -56,9 +60,10 @@ public class Main extends JFrame{
 		explanBtn.setForeground(new Color(142, 110, 0));		
 
 		//버튼 테두리 둥글게
-		rankingBtn.setBorder(new RoundBorder(30));
-		gamestartBtn.setBorder(new RoundBorder(30));
-		explanBtn.setBorder(new RoundBorder(30));
+		float borderWidth = 2.0f;
+		rankingBtn.setBorder(new RoundBorder(30, new Color(255,228,131), borderWidth));
+		gamestartBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), borderWidth));
+		explanBtn.setBorder(new RoundBorder(30, new Color(255,228,131), borderWidth));
 		
 		//버튼 폰트 설정
 		rankingBtn.setFont(buttonFont);
@@ -86,25 +91,26 @@ public class Main extends JFrame{
 //버튼 테두리 둥글게 만드는 클래스
 class RoundBorder extends AbstractBorder{
 	int radius;
-	
-	public RoundBorder (int radius) {
-		this.radius = radius;
-	}
-	
-	@Override
-	public void paintBorder(java.awt.Component c, Graphics g, int x, int y, int width, int height) {
-		g.setColor(c.getForeground());
-		g.drawRoundRect(x, y, width-1, height-1, radius, radius);
-	}
-	@Override
-	public Insets getBorderInsets(java.awt.Component c) {
-		return new Insets(this.radius + 1, this.radius + 1, this.radius + 2, this.radius);
-	 }
-	   @Override
-	    public Insets getBorderInsets(java.awt.Component c, Insets insets) {
-	        insets.left = insets.right = this.radius + 1;
-	        insets.top = insets.bottom = this.radius + 2;
-	        return insets;
+	Color borderColor;
+	float borderWidth;
+	   public RoundBorder(int radius, Color borderColor, float borderWidth) {
+	        this.radius = radius;
+	        this.borderColor = borderColor; // 테두리 색상 지정
+	        this.borderWidth = borderWidth;
+	    }
+
+	    @Override
+	    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+	    	Graphics2D g2 = (Graphics2D) g.create();
+	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);	        
+	        g2.setColor(borderColor); // 테두리 색상 설정
+	        g2.setStroke(new BasicStroke(borderWidth));
+	        g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+	    }
+
+	    @Override
+	    public Insets getBorderInsets(Component c) {
+	        return new Insets(this.radius + 1, this.radius + 1, this.radius + 2, this.radius);
 	    }
 
 	    @Override
@@ -116,4 +122,3 @@ class RoundBorder extends AbstractBorder{
 	        return new RoundRectangle2D.Double(x, y, width - 1, height - 1, radius, radius);
 	    }
 	}
-
