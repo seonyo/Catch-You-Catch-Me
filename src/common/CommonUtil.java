@@ -5,6 +5,7 @@ import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class CommonUtil {
 	
@@ -13,14 +14,16 @@ public class CommonUtil {
 	public static Font largeFont = new Font("Noto Sans KR", Font.BOLD, 30);
 	
 	public static void settings(JFrame f) {
-		f.setSize(750,500);								
+		f.setSize(765,538);		
+//		f.setSize(750,500);								
+
 		f.setResizable(false);
 		f.setTitle("CatchYouCatchMe");			
 		f.setLayout(null);
 		f.setLocationRelativeTo(null);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+		
 	// 확인 창
 	public static void infoMsg(Container container, String msg) {
 		JOptionPane.showMessageDialog(container, msg, "안내", JOptionPane.INFORMATION_MESSAGE);
