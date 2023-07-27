@@ -1,11 +1,16 @@
 package common;
 
 import java.awt.Container;
+import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class CommonUtil {
+	
+	public static Font smallFont = new Font("Noto Sans KR", Font.BOLD, 10);
+	public static Font midFont = new Font("Noto Sans KR", Font.BOLD, 20);
+	public static Font largeFont = new Font("Noto Sans KR", Font.BOLD, 30);
 	
 	public static void settings(JFrame f) {
 		f.setSize(750,500);								
