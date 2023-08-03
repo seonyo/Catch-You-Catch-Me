@@ -52,7 +52,6 @@ public class ConnectionMgr {
 	}
 	
 	public static void main(String[] args) {
-		ConnectionMgr cm = new ConnectionMgr();
-		System.out.println("왜 안나와");
+		getConnection();
 	}
 }
