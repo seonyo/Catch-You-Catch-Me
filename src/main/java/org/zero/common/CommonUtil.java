@@ -1,4 +1,4 @@
-package common;
+package org.zero.common;
 
 import java.awt.Container;
 import java.awt.Font;

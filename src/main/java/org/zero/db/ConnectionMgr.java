@@ -1,4 +1,4 @@
-package db;
+package org.zero.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
