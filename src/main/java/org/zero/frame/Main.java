@@ -14,7 +14,7 @@ import org.zero.common.CommonUtil;
 
 public class Main extends JFrame{
     Font buttonFont = new Font("Noto Sans KR", Font.BOLD, 20);
-    Image background = new ImageIcon("../resources/static/img/메인화면.png").getImage();
+	Image background = new ImageIcon(Main.class.getResource("/static/img/메인화면.png")).getImage();
 
     public Main() {
     	// 시작기본세팅 메서드
