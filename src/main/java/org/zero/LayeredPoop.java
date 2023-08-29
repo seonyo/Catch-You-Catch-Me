@@ -17,7 +17,7 @@ public class LayeredPoop extends JFrame {
         content = new JLayeredPane();
         content.setOpaque( true );
         label = new  JLabel[ 10 ];
-        JLabel backgroundLabel = new JLabel(new ImageIcon("static/img/결과화면-제목없는ver.png"));
+        JLabel backgroundLabel = new JLabel(new ImageIcon("static/img/결과화면.png"));
         backgroundLabel.setBounds(0,0,750,500);
         content.add(backgroundLabel);
         setContentPane( content );
