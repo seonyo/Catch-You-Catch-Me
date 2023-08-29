@@ -7,10 +7,7 @@ import java.awt.*;
 public class Result extends JFrame{
 	
 	private Container c;
-//	private Image background = new ImageIcon(Main.class.getResource("./img/결과화면-제목없는ver.png")).getImage();
-//	private Image background = new ImageIcon("./img/결과화면-제목없는ver.png").getImage();
-	private Image background = new ImageIcon("static/img/결과화면-제목없는ver.png").getImage();
-	
+	private Image background = new ImageIcon(Main.class.getResource("/static/img/결과화면.png")).getImage();
 	public Result() {
 		// 시작기본세팅 메서드
 		org.zero.common.CommonUtil.settings(this);
