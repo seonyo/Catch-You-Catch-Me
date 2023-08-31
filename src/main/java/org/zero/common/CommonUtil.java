@@ -12,6 +12,7 @@ public class CommonUtil {
 	public static Font smallFont = new Font("Noto Sans KR", Font.BOLD, 10);
 	public static Font semiMidFont = new Font("Noto Sans KR", Font.BOLD, 15);
 	public static Font midFont = new Font("Noto Sans KR", Font.BOLD, 20);
+	public static Font semiLargeFont = new Font("Noto Sans KR", Font.BOLD, 25);
 	public static Font largeFont = new Font("Noto Sans KR", Font.BOLD, 30);
 	
 	public static void settings(JFrame f) {
