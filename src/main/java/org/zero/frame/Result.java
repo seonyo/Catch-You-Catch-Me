@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static org.zero.common.CommonUtil.settings;
+import static org.zero.common.CommonUtil.*;
 
 public class Result extends JFrame{
 	
@@ -24,7 +24,8 @@ public class Result extends JFrame{
 		JPanel basePanel = new JPanel(null);
 		JButton beforeBtn = new JButton();
 
-		title.setFont(CommonUtil.midFont);
+		title.setFont(CommonUtil.titleFont);
+		title.setForeground(titleColor);
 
 		beforeBtn.setIcon(preBtnImg);
 		beforeBtn.setBorderPainted(false); // 버튼 테두리 설정해제
@@ -40,7 +41,7 @@ public class Result extends JFrame{
 
 		// 좌표 설정
 		beforeBtn.setBounds(50,395,50,50);
-		title.setBounds(335, 55, 120, 120);
+		title.setBounds(330, 55, 120, 120);
 		basePanel.setBounds(0, 0, 750, 500);
 		backgroundLabel.setBounds(0,0,750,500);
 		backgroundLabel.add(title);
