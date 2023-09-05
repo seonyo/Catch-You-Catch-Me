@@ -59,7 +59,7 @@ public class GameReady extends JFrame{
 			btn[i].setForeground(new Color (142,110,0));
 			p.add(btn[i]);
 		}
-
+		//test
 		JButton gamestartBtn = new JButton("게임시작");
 		gamestartBtn.setBounds(500,383, 170, 45);
 		gamestartBtn.setBackground(new Color(255,228,131));
