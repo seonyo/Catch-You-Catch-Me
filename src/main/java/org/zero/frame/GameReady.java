@@ -15,6 +15,7 @@ import static org.zero.common.CommonUtil.*;
 public class GameReady extends JFrame{
 	Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
 	String content="";
+	String name="";
 	public GameReady() {
 		// 시작기본세팅 메서드
 		settings(this);
@@ -33,15 +34,21 @@ public class GameReady extends JFrame{
 		p.setLayout(null);
 		add(p);
 
+		JLabel idText = new JLabel("아이디");
+		idText.setBounds(110,142,100,50);
+		idText.setFont(midFont);
+		p.add(idText);
+
 		JTextField idTf = new JTextField();
-		idTf.setBounds(240, 142, 360,50);
+		idTf.setBounds(188, 142, 360,50);
 		idTf.setFont(midFont);
 		p.add(idTf);
 
-		JLabel idText = new JLabel("아이디");
-		idText.setBounds(160,142,100,50);
-		idText.setFont(midFont);
-		p.add(idText);
+		JButton idBtn = new JButton("확인");
+		idBtn.setBounds(570,142,80,50);
+		idBtn.setBackground(new Color(255,228,131));
+		idBtn.setFont(midFont);
+		p.add(idBtn);
 
 		JLabel readyText = new JLabel("플레이 할 주제를 선택하세요!");
 		readyText.setBounds(235,210,400,40);
@@ -85,9 +92,28 @@ public class GameReady extends JFrame{
 
 		});
 
+		idBtn.addActionListener(event->{
+			name = idTf.getText();
+			if(name.equals("")){
+				JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "아이디가 정상적으로 등록 되었습니다.");
+				idBtn.setBackground(new Color(198,198,198));
+			}
+		});
+
 		gamestartBtn.addActionListener(event ->{
-			dispose();
-			new BeforeGameStart();
+			if(content.equals("")){
+				JOptionPane.showMessageDialog(null, "주제를 선택하세요.");
+			}
+			else if(name.equals("")){
+				JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
+			}
+			else{
+				dispose();
+				new BeforeGameStart();
+			}
 		});
 		setVisible(true);
 
