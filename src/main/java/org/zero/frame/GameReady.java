@@ -68,15 +68,6 @@ public class GameReady extends JFrame{
 		gamestartBtn.setFont(midFont);
 		p.add(gamestartBtn);
 
-//		btn[0].addActionListener(event ->{
-//			content = btn[0].getText();
-//			btn[0].setBackground(new Color(255,228,131));
-//			if(flag.contains(1)){
-//				int changeColor = Arrays.asList(flag).indexOf(1);
-//				btn[0].setBackground(new Color(255,255,255));
-//			}
-//			flag.set(0,1);
-//		});
 		btn[0].addActionListener(event -> {
 			changeBtn(btn[0], 0, flag, btn);
 		});
@@ -94,6 +85,10 @@ public class GameReady extends JFrame{
 
 		});
 
+		gamestartBtn.addActionListener(event ->{
+			dispose();
+			new BeforeGameStart();
+		});
 		setVisible(true);
 
 
