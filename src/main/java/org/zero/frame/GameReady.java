@@ -1,20 +1,26 @@
 package org.zero.frame;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 
 import org.zero.common.CommonUtil;
 
+import static java.util.Arrays.asList;
 import static org.zero.common.CommonUtil.*;
 
 public class GameReady extends JFrame{
 	Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
+	String content="";
 	public GameReady() {
 		// 시작기본세팅 메서드
-		CommonUtil.settings(this);
+		settings(this);
 		String arrBtn[] = {"동물", "음식", "사물", "장소"};
 		int btnX = 155;
+		ArrayList<Integer> flag = new ArrayList<>(asList(0,0,0,0));
 		//배경 패널 생성
 		JPanel p = new JPanel() {
 			@Override
@@ -42,17 +48,18 @@ public class GameReady extends JFrame{
 		readyText.setFont(midFont);
 		readyText.setForeground(new Color(142,110,0));
 		p.add(readyText);
-
+		
+		JButton btn [] = new JButton[4];
 		for(int i=0; i<arrBtn.length; i++){
-			JButton btn = new JButton(arrBtn[i]);
-			btn.setBounds(btnX, 270, 100, 35);
+			btn[i] = new JButton(arrBtn[i]);
+			btn[i].setBounds(btnX, 270, 100, 35);
 			btnX += 115;
-			btn.setBackground(new Color(255,255,255));
-			btn.setFont(midFont);
-			btn.setForeground(new Color (142,110,0));
-			p.add(btn);
+			btn[i].setBackground(new Color(255,255,255));
+			btn[i].setFont(midFont);
+			btn[i].setForeground(new Color (142,110,0));
+			p.add(btn[i]);
 		}
-
+		//test
 		JButton gamestartBtn = new JButton("게임시작");
 		gamestartBtn.setBounds(500,383, 170, 45);
 		gamestartBtn.setBackground(new Color(255,228,131));
@@ -61,9 +68,46 @@ public class GameReady extends JFrame{
 		gamestartBtn.setFont(midFont);
 		p.add(gamestartBtn);
 
+		btn[0].addActionListener(event -> {
+			changeBtn(btn[0], 0, flag, btn);
+		});
+
+		btn[1].addActionListener(event -> {
+			changeBtn(btn[1], 1, flag, btn);
+		});
+
+		btn[2].addActionListener(event -> {
+			changeBtn(btn[2], 2, flag, btn);
+		});
+
+		btn[3].addActionListener(event -> {
+			changeBtn(btn[3], 3, flag, btn);
+
+		});
+
+		gamestartBtn.addActionListener(event ->{
+			dispose();
+			new BeforeGameStart();
+		});
 		setVisible(true);
 
 
+	}
+
+	public void changeBtn(JButton btn, int index, ArrayList<Integer> flag, JButton button[]){
+		content = btn.getText();
+		if (flag.get(index) == 0) {
+			btn.setBackground(new Color(255, 228, 131));
+			if (flag.contains(1)) {
+				int changeColor = flag.indexOf(1);
+				button[changeColor].setBackground(new Color(255, 255, 255));
+				flag.set(changeColor, 0);
+			}
+			flag.set(index, 1);
+		} else {
+			btn.setBackground(new Color(255, 255, 255));
+			flag.set(index, 0);
+		}
 	}
 	
 	public static void main(String[] args) {
