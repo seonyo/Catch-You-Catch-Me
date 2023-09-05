@@ -93,6 +93,7 @@ public class ConnectionMgr {
 			System.out.print(rs.getString("category")+" ");
 		}
 
+		
 		// 사용 후 close
 		stmt.close();
 		rs.close();

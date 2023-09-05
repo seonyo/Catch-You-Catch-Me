@@ -40,6 +40,12 @@ public class GameExplan extends JFrame{
 			y += 30; // 적절한 간격으로 조정
 		}
 
+		JLabel title = new JLabel("게임 방법");
+		title.setBounds(320,90,200,40);
+		title.setFont(semiLargeFont);
+		title.setForeground(new Color(153,120,0));
+		p.add(title);
+
 
 		JButton gamestartBtn = new JButton("게임시작");
 		gamestartBtn.setBounds(510,400, 170, 45);

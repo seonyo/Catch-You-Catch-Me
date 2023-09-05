@@ -11,7 +11,11 @@ public class CommonUtil {
 	public static Font smallFont = new Font("Noto Sans KR", Font.BOLD, 10);
 	public static Font semiMidFont = new Font("Noto Sans KR", Font.BOLD, 15);
 	public static Font midFont = new Font("Noto Sans KR", Font.BOLD, 20);
+<<<<<<< HEAD
 	public static Font titleFont = new Font("Noto Sans KR", Font.BOLD, 25);
+=======
+	public static Font semiLargeFont = new Font("Noto Sans KR", Font.BOLD, 25);
+>>>>>>> 6e940205e86ba1bbe61a181ee011e006304b3612
 	public static Font largeFont = new Font("Noto Sans KR", Font.BOLD, 30);
 	public static Color titleColor = new Color(142,110,0);
 
