@@ -12,15 +12,6 @@ public class ConnectionMgr {
 	private static String user = "root";
 	private static String password = "gkdms~!1357";
 
-//	static {
-//		try {
-//			Class.forName(DB.MySQL.DRIVER_NAME);
-//		} catch (Exception e) {
-//			System.out.println("DB 이름이 올바르지 않음");
-//			e.printStackTrace();
-//		}
-//	}
-
 	// Connection 가져오기
 	public static Connection getConnection() {
 		if ( conn == null ) {
