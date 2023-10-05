@@ -5,10 +5,7 @@ import org.zero.common.CommonUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 import static org.zero.common.CommonUtil.*;
 
 public class Result extends JFrame{
@@ -17,14 +14,10 @@ public class Result extends JFrame{
 	private ImageIcon preBtnImg = new ImageIcon(Main.class.getResource("/static/img/beforeBtn.png"));
 	private JLabel title = new JLabel("Result");
 	private JLabel backgroundLabel = new JLabel(new ImageIcon(background));
-	private JPanel basePanel = new JPanel(null);
 	private JPanel rankPanel = new JPanel(new BorderLayout());
-	private JPanel btnPanel = new JPanel(new GridLayout(10,1));
-
-	private JTabbedPane tabbedPane = new JTabbedPane();
-	private JScrollPane rankScroll = new JScrollPane();
+	private JScrollPane scroll = new JScrollPane();
 	private JButton beforeBtn = new JButton();
-	private JButton[] rankBtn = new JButton[20];
+
 	public Result() {
 		// 시작기본세팅 메서드
 		settings(this);
@@ -43,17 +36,38 @@ public class Result extends JFrame{
 //		rankScroll.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);// 항상 스크롤바 표시
 //		rankScroll.setBackground(titleColor);
 //		rankPanel.setBackground(titleColor);
+		JLabel ranking1 = new JLabel("1");
+		ranking1.setBounds(125,170, 20,20);
+		ranking1.setFont(semiMidFont);
+		this.add(ranking1);
 
-		// 랭킹
-//		for ( JButton btn : rankBtn ) {
-//			btn = new JButton("버튼");
-//			btn.revalidate();
-//			btn.repaint();
-//			btnPanel.add(btn);
-//
+		// 플레이어 명단
+		JLabel []players = new JLabel[4];
+		for (int i =  0; i < players.length; i++) {
+			players[i] = new JLabel("노하은");
+			players[i].setFont(semiMidFont);
+			players[i].setBounds(100+((i+1)*80), 170, 120,20);
+			this.add(players[i]);
+		}
+		JLabel time = new JLabel("30:30");
+		time.setFont(semiLargeFont);
+		time.setForeground(titleColor);
+		time.setBounds(530, 120, 120, 120);
+		this.add(time);
+
+//		for ( int i = 0; i < time.length; i++) {
+//			time[i] = JLabel("30:30");
 //		}
-		btnPanel.add(new JButton("버튼"));
-		btnPanel.add(new JButton("버튼"));
+
+		// 랭킹 바탕 그림
+		JLabel rankBackground = new JLabel();
+		ImageIcon rankBackgroundImg = new ImageIcon(Main.class.getResource("/static/img/rank_background.png"));
+		rankBackground.setIcon(rankBackgroundImg);
+		rankBackground.setBounds(100,130,600,100);
+		this.getContentPane().add(rankBackground);
+
+//		players[1].setText("정선영");
+
 
 		// 이벤트 처리
 		beforeBtn.addActionListener( e -> {
@@ -64,25 +78,15 @@ public class Result extends JFrame{
 		// 좌표 설정
 		beforeBtn.setBounds(50,395,50,50);
 		title.setBounds(330, 55, 120, 120);
-		basePanel.setBounds(0, 0, 750, 500);
-		basePanel.setBackground(Color.BLACK);
 		rankPanel.setBounds(150,150, 300,300);
-		rankScroll.setBounds(0,0, 300,300);
+		scroll.setBounds(0,0, 300,300);
 		backgroundLabel.setBounds(0,0,750,500);
 		backgroundLabel.add(title);
 
-		rankPanel.add(btnPanel);
-		basePanel.add(backgroundLabel);
-		basePanel.add(beforeBtn);
-		basePanel.add(rankPanel);
-		this.add(basePanel);
+		this.add(backgroundLabel);
+		this.add(beforeBtn);
+		this.add(rankPanel);
 		this.setVisible(true);
-//		basePanel.revalidate();
-//		basePanel.repaint();
-//		rankPanel.revalidate();
-//		rankPanel.repaint();
-//		beforeBtn.revalidate();
-//		beforeBtn.repaint();
 	}
 
 	public static void main(String[] args) {
