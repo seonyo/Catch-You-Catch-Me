@@ -32,10 +32,6 @@ public class Result extends JFrame{
 		beforeBtn.setFocusPainted(false);
 		beforeBtn.setBackground(Color.WHITE);
 
-		// 스크롤
-//		rankScroll.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);// 항상 스크롤바 표시
-//		rankScroll.setBackground(titleColor);
-//		rankPanel.setBackground(titleColor);
 		JLabel ranking1 = new JLabel("1");
 		ranking1.setBounds(125,170, 20,20);
 		ranking1.setFont(semiMidFont);
@@ -55,19 +51,12 @@ public class Result extends JFrame{
 		time.setBounds(530, 120, 120, 120);
 		this.add(time);
 
-//		for ( int i = 0; i < time.length; i++) {
-//			time[i] = JLabel("30:30");
-//		}
-
 		// 랭킹 바탕 그림
 		JLabel rankBackground = new JLabel();
 		ImageIcon rankBackgroundImg = new ImageIcon(Main.class.getResource("/static/img/rank_background.png"));
 		rankBackground.setIcon(rankBackgroundImg);
 		rankBackground.setBounds(100,130,600,100);
 		this.getContentPane().add(rankBackground);
-
-//		players[1].setText("정선영");
-
 
 		// 이벤트 처리
 		beforeBtn.addActionListener( e -> {
