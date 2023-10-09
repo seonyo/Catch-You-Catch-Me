@@ -6,59 +6,50 @@ import java.sql.*;
 //import java.sql.DriverManager;
 
 public class ConnectionMgr {
-//	private static Connection conn;
-//	private static Statement stmt;
-//	private static String url = "jdbc:mysql://10.96.122.57:3306/catchmind_db";
-
-//	static {
-//		try {
-//			Class.forName(DB.MySQL.DRIVER_NAME);
-//		} catch (Exception e) {
-//			System.out.println("DB 이름이 올바르지 않음");
-//			e.printStackTrace();
-//		}
-//	}
+	private static Connection conn;
+	private static Statement stmt;
+	private static String url = DB.MySQL.JDBC_URL;
+	private static String user = "root";
+	private static String password = "gkdms~!1357";
 
 	// Connection 가져오기
-//	public static Connection getConnection() {
-//		if ( conn == null ) {
-//			conn = makeConnection();
-//		}
-//		return conn;
-//	}
+	public static Connection getConnection() {
+		if ( conn == null ) {
+			conn = makeConnection();
+		}
+		return conn;
+	}
 
 	// Connection 끊기
-//	public static void closeConnection() {
-//		if ( conn != null ) {
-//			try {
-//				conn.close();
-//			} catch (Exception e) {
-//				System.out.println("DB 연결 끊기 실패");
-//				e.printStackTrace();
-//			}
-//			conn = null;
-//		}
-//	}
+	public static void closeConnection() {
+		if ( conn != null ) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				System.out.println("DB 연결 끊기 실패");
+				e.printStackTrace();
+			}
+			conn = null;
+		}
+	}
 
 	// Connection 만들기
-//	public static Connection makeConnection() {
-//		try {
-//			conn = DriverManager.getConnection(url, "root", "gkdms~!1357");
-//			System.out.println("DB 연동 성공");
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			System.out.println("DB 연동 실패");
-//		}
-//		return conn;
-//	}
+	public static Connection makeConnection() {
+		try {
+			conn = DriverManager.getConnection(url, user, password);
+			System.out.println("DB 연동 성공");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("DB 연동 실패");
+		}
+		return conn;
+	}
 	
 	public static void main(String[] args) throws SQLException {
-
-		String url = "jdbc:mysql://localhost:3306/catchmind_db";
 		// 커넥션 객체 만들기
-		Connection conn = DriverManager.getConnection(url, "root", "gkdms~!1357");
+		conn = getConnection();
 
-		Statement stmt = conn.createStatement();
+		stmt = conn.createStatement();
 		ResultSet rs;
 
 		// 데이터베이스 존재 시 삭제
@@ -93,10 +84,10 @@ public class ConnectionMgr {
 			System.out.print(rs.getString("category")+" ");
 		}
 
-		
+
 		// 사용 후 close
 		stmt.close();
 		rs.close();
-		conn.close();
+		closeConnection();
 	}
 }
