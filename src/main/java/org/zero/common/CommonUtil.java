@@ -7,7 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class CommonUtil {
-	
+	public static int WIDTH = 765;
+	public static int HEIGHT = 538;
 	public static Font smallFont = new Font("Noto Sans KR", Font.BOLD, 10);
 	public static Font semiMidFont = new Font("Noto Sans KR", Font.BOLD, 15);
 	public static Font midFont = new Font("Noto Sans KR", Font.BOLD, 20);
@@ -17,7 +18,7 @@ public class CommonUtil {
 	public static Color titleColor = new Color(142,110,0);
 
 	public static void settings(JFrame f) {
-		f.setSize(765,538);		
+		f.setSize(WIDTH,HEIGHT);
 //		f.setSize(750,500);								
 
 		f.setResizable(false);
