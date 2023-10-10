@@ -27,6 +27,19 @@ public class CommonUtil {
 		f.setLocationRelativeTo(null);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+
+	// 바탕 이미지 그리기
+	public static void makeBackground(Container c, JPanel backgroundPanel, Image img) {
+		backgroundPanel = new JPanel(null) {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(img, 0, 0, null);
+			}
+		};
+		backgroundPanel.setBounds(0,0,CommonUtil.WIDTH,CommonUtil.HEIGHT);
+		c.add(backgroundPanel);
+	}
 		
 	// 확인 창
 	public static void infoMsg(Container container, String msg) {

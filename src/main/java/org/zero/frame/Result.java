@@ -29,17 +29,8 @@ public class Result extends JFrame{
 	public Result() {
 		// 시작기본세팅 메서드
 		settings(this);
-
-		// 랭킹 바탕 그림
-		backgroundPanel = new JPanel(null) {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				g.drawImage(background, 0, 0, null);
-			}
-		};
-		backgroundPanel.setBounds(0,0,CommonUtil.WIDTH,CommonUtil.HEIGHT);
-		add(backgroundPanel);
+		// 배경 그리기
+		makeBackground(this, backgroundPanel, background);
 
 		// 제목
 		title.setFont(CommonUtil.titleFont);
@@ -57,21 +48,20 @@ public class Result extends JFrame{
 		beforeBtn.setBounds(40,395,50,50);
 
 		// 스크롤
-//		JScrollPane sp = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//		sp.setBounds(100,0, CommonUtil.WIDTH-213,300);
-//		sp.add(rankPanel);
-//		sp.setOpaque(false);// 배경색 투명하게
-//		sp.getViewport().setOpaque(false);// 배경색 투명하게
-//		sp.setBorder(createEmptyBorder());// 외곽선 투명하게
-//		rankBackgroundPanel.add(sp);
+		JScrollPane sp = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		sp.setBounds(100,0, WIDTH-213,300);
+		sp.setOpaque(false);// 배경색 투명하게
+		sp.getViewport().setOpaque(false);// 배경색 투명하게
+		sp.setBorder(createEmptyBorder());// 외곽선 투명하게
+		rankBackgroundPanel.add(sp);
 
 		// 랭킹
 		rankBackgroundPanel.setBounds(0,140, CommonUtil.WIDTH,300);
-		//rankBackgroundPanel.setBackground(Color.BLUE);
 		rankBackgroundPanel.setBackground(new Color(0,0,0,0));
 		rankPanel = new JPanel[players.length];
 		for ( int i = 0; i < players.length; i++) {
 			rankPanel[i] = new JPanel(null);
+			sp.add(rankPanel[i]);
 			// 등수
 			rank = new JLabel((i+1)+"");
 			rank.setBounds(30,10, 20,22);
@@ -79,7 +69,7 @@ public class Result extends JFrame{
 			rankPanel[i].add(rank);
 
 			// 랭킹 배경 이미지
-			rankBackImgLabel.setBounds(-15, 10, CommonUtil.WIDTH, 45);
+			rankBackImgLabel.setBounds(-15, 10, WIDTH, 45);
 			rankPanel[i].add(rankBackImgLabel);
 
 			// 플레이타임
@@ -97,7 +87,7 @@ public class Result extends JFrame{
 				rankPanel[i].add(players[i][j]);
 			}
 
-			rankPanel[i].setBounds(100, 10+i*60, CommonUtil.WIDTH-230, 45);
+			rankPanel[i].setBounds(100, 10+i*60, WIDTH-230, 45);
 			rankBackgroundPanel.add(rankPanel[i]);
 		}
 
