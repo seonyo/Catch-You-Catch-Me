@@ -19,17 +19,17 @@ public class CommonUtil {
 
 	public static void settings(JFrame f) {
 		f.setSize(WIDTH,HEIGHT);
-//		f.setSize(750,500);								
+//		f.setSize(750,500);
 
 		f.setResizable(false);
-		f.setTitle("CatchYouCatchMe");			
+		f.setTitle("CatchYouCatchMe");
 		f.setLayout(null);
 		f.setLocationRelativeTo(null);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	// 바탕 이미지 그리기
-	public static void makeBackground(Container c, JPanel backgroundPanel, Image img) {
+	public static JPanel makeBackground(JPanel backgroundPanel, Image img) {
 		backgroundPanel = new JPanel(null) {
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -38,9 +38,10 @@ public class CommonUtil {
 			}
 		};
 		backgroundPanel.setBounds(0,0,CommonUtil.WIDTH,CommonUtil.HEIGHT);
-		c.add(backgroundPanel);
+
+		return backgroundPanel;
 	}
-		
+
 	// 확인 창
 	public static void infoMsg(Container container, String msg) {
 		JOptionPane.showMessageDialog(container, msg, "안내", JOptionPane.INFORMATION_MESSAGE);
