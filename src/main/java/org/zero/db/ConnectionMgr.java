@@ -1,9 +1,6 @@
 package org.zero.db;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
-//import java.sql.DriverManager;
-//import java.sql.DriverManager;
 
 public class ConnectionMgr {
 	private static Connection conn;
