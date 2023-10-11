@@ -9,6 +9,7 @@ import static org.zero.common.CommonUtil.*;
 public class Result extends JFrame {
 	private JPanel backgroundPanel;
 	private JLabel title;
+	private JPanel rankBackgroundPanel = new JPanel(null);
 	private RankPanel[] rankPanels;
 	private JButton beforeBtn;
 	private Image background = new ImageIcon(Main.class.getResource("/static/img/result.png")).getImage();
@@ -32,8 +33,9 @@ public class Result extends JFrame {
 		rankPanels = new RankPanel[10];
 		for (int i = 0; i < rankPanels.length; i++) {
 			rankPanels[i] = new RankPanel(i + 1);
-			rankPanels[i].setBounds(100, 155 + i * 60, 550, 45);
-			backgroundPanel.add(rankPanels[i]);
+			rankPanels[i].setBounds(0, 5 + i * 60, 550, 45);
+			rankPanels[i].setBackground(new Color(0,0,0,0));
+			rankBackgroundPanel.add(rankPanels[i]);
 		}
 
 		// 이전 버튼
@@ -49,7 +51,16 @@ public class Result extends JFrame {
 		});
 		backgroundPanel.add(beforeBtn);
 
+		// 스크롤을 포함한 랭킹 패널 생성
+		JScrollPane scrollPane = new JScrollPane(rankBackgroundPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBounds(10, 155, WIDTH, 300); // 조절 가능
+		backgroundPanel.add(scrollPane);
+
 		// 화면 표시
+		rankBackgroundPanel.setBackground(new Color(0,0,0,0));
+		rankBackgroundPanel.setBounds(100, 150, 550, 300);
+
+		backgroundPanel.add(rankBackgroundPanel);
 		this.add(backgroundPanel);
 		this.setVisible(true);
 	}
