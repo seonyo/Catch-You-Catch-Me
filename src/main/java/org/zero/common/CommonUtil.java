@@ -7,7 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class CommonUtil {
-	
+	public static int WIDTH = 765;
+	public static int HEIGHT = 538;
 	public static Font smallFont = new Font("Noto Sans KR", Font.BOLD, 10);
 	public static Font semiMidFont = new Font("Noto Sans KR", Font.BOLD, 15);
 	public static Font midFont = new Font("Noto Sans KR", Font.BOLD, 20);
@@ -17,16 +18,30 @@ public class CommonUtil {
 	public static Color titleColor = new Color(142,110,0);
 
 	public static void settings(JFrame f) {
-		f.setSize(765,538);		
-//		f.setSize(750,500);								
+		f.setSize(WIDTH,HEIGHT);
+//		f.setSize(750,500);
 
 		f.setResizable(false);
-		f.setTitle("CatchYouCatchMe");			
+		f.setTitle("CatchYouCatchMe");
 		f.setLayout(null);
 		f.setLocationRelativeTo(null);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-		
+
+	// 바탕 이미지 그리기
+	public static JPanel makeBackground(JPanel backgroundPanel, Image img) {
+		backgroundPanel = new JPanel(null) {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(img, 0, 0, null);
+			}
+		};
+		backgroundPanel.setBounds(0,0,CommonUtil.WIDTH,CommonUtil.HEIGHT);
+
+		return backgroundPanel;
+	}
+
 	// 확인 창
 	public static void infoMsg(Container container, String msg) {
 		JOptionPane.showMessageDialog(container, msg, "안내", JOptionPane.INFORMATION_MESSAGE);
