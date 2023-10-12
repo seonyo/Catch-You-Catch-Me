@@ -4,6 +4,8 @@ import org.zero.common.CommonUtil;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static javax.swing.BorderFactory.createEmptyBorder;
 import static org.zero.common.CommonUtil.*;
 
 public class Result extends JFrame {
@@ -21,6 +23,8 @@ public class Result extends JFrame {
 
 		// 배경 이미지
 		backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
+		rankBackgroundPanel.setBackground(new Color(0,0,0,0));
+		rankBackgroundPanel.setBounds(100, 150, 550, 300);
 
 		// 제목
 		title = new JLabel("Result");
@@ -53,14 +57,14 @@ public class Result extends JFrame {
 
 		// 스크롤을 포함한 랭킹 패널 생성
 		JScrollPane scrollPane = new JScrollPane(rankBackgroundPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBounds(10, 155, WIDTH, 300); // 조절 가능
+		scrollPane.setBounds(90, 150, 570, 300); // 조절 가능
+//		scrollPane.setBackground(Color.BLUE);
+		scrollPane.setBackground(new Color(0,0,0,0));
+		scrollPane.setBorder(createEmptyBorder());
 		backgroundPanel.add(scrollPane);
 
 		// 화면 표시
-		rankBackgroundPanel.setBackground(new Color(0,0,0,0));
-		rankBackgroundPanel.setBounds(100, 150, 550, 300);
 
-		backgroundPanel.add(rankBackgroundPanel);
 		this.add(backgroundPanel);
 		this.setVisible(true);
 	}
