@@ -12,8 +12,10 @@ import javax.swing.JPanel;
 
 import org.zero.common.CommonUtil;
 
+import static org.zero.common.CommonUtil.*;
+
 public class Main extends JFrame{
-    Font buttonFont = new Font("Noto Sans KR", Font.BOLD, 20);
+	private JPanel backgroundPanel;
 	Image background = new ImageIcon(Main.class.getResource("/static/img/메인화면.png")).getImage();
 
     public Main() {
@@ -21,17 +23,8 @@ public class Main extends JFrame{
 
     	CommonUtil.settings(this);
 
-    	//배경 패널 생성
-        JPanel p = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g); // JPanel의 paintComponent() 메소드 호출
-                g.drawImage(background, 0, 0, null);
-            }
-        };
+		backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
-		p.setBounds(0,0,750,500);
-		p.setLayout(null);
 
 		//버튼 생성
 		JButton rankingBtn = new JButton ("랭킹보기");
@@ -60,17 +53,17 @@ public class Main extends JFrame{
 		explanBtn.setBorder(new RoundBorder(30, new Color(255,228,131), borderWidth));
 
 		//버튼 폰트 설정
-		rankingBtn.setFont(buttonFont);
-		gamestartBtn.setFont(buttonFont);
-		explanBtn.setFont(buttonFont);
+		rankingBtn.setFont(midFont);
+		gamestartBtn.setFont(midFont);
+		explanBtn.setFont(midFont);
 
 		//패널에 버튼 붙이기
-		p.add(rankingBtn);
-		p.add(gamestartBtn);
-		p.add(explanBtn);
+		backgroundPanel.add(rankingBtn);
+		backgroundPanel.add(gamestartBtn);
+		backgroundPanel.add(explanBtn);
 
 		//프레임에 패널 붙이기
-		add(p);
+		add(backgroundPanel);
 		setVisible(true);
 
 		rankingBtn.addActionListener(event ->{
