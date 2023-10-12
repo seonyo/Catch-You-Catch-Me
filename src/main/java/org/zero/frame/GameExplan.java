@@ -8,6 +8,7 @@ import java.awt.*;
 import static org.zero.common.CommonUtil.*;
 
 public class GameExplan extends JFrame{
+	private JPanel backgroundPanel;
 	Image background = new ImageIcon(Main.class.getResource("/static/img/게임설명.png")).getImage();
 	String arr[]= {
 			"1. 사용할 아이디를 입력하세요", "2. 그릴 그림의 주제를 선택하세요",
@@ -20,23 +21,15 @@ public class GameExplan extends JFrame{
 	public GameExplan() {
 		// 시작기본세팅 메서드
 		CommonUtil.settings(this);
-		JPanel p = new JPanel() {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g); // JPanel의 paintComponent() 메소드 호출
-				g.drawImage(background, 0, 0, null);
-			}
-		};
+		backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
-		p.setBounds(0,0,750,500);
-		p.setLayout(null);
-		add(p);
+		add(backgroundPanel);
 
 		for(int i=0; i<arr.length; i++){
 			JLabel jl = new JLabel(arr[i]);
 			jl.setBounds(80, y, 640, 30); // 위치와 크기를 설정
 			jl.setFont(semiMidFont);
-			p.add(jl);
+			backgroundPanel.add(jl);
 			y += 30; // 적절한 간격으로 조정
 		}
 
@@ -44,7 +37,7 @@ public class GameExplan extends JFrame{
 		title.setBounds(320,90,200,40);
 		title.setFont(semiLargeFont);
 		title.setForeground(new Color(153,120,0));
-		p.add(title);
+		backgroundPanel.add(title);
 
 
 		JButton gamestartBtn = new JButton("게임시작");
@@ -53,7 +46,7 @@ public class GameExplan extends JFrame{
 		gamestartBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), 2.0f));
 		gamestartBtn.setForeground(new Color(168, 131, 0));
 		gamestartBtn.setFont(midFont);
-		p.add(gamestartBtn);
+		backgroundPanel.add(gamestartBtn);
 
 
 		setVisible(true);

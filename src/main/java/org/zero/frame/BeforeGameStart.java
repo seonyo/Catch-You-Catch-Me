@@ -7,10 +7,11 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static org.zero.common.CommonUtil.semiMidFont;
+import static org.zero.common.CommonUtil.*;
 
 
 public class BeforeGameStart extends JFrame {
+    private JPanel backgroundPanel;
     Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
     Image red = new ImageIcon(Main.class.getResource("/static/img/red.png")).getImage();
     Image orange = new ImageIcon(Main.class.getResource("/static/img/orange.png")).getImage();
@@ -27,20 +28,13 @@ public class BeforeGameStart extends JFrame {
 
     public BeforeGameStart() {
         CommonUtil.settings(this);
-        JPanel p = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g); // JPanel의 paintComponent() 메소드 호출
-                g.drawImage(background, 0, 0, null);
-            }
-        };
-        p.setBounds(0, 0, 750, 500);
-        p.setLayout(null);
+
+        backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         JPanel pancelP = new JPanel();
         pancelP.setBounds(40, 350, 470, 107);
         pancelP.setBackground(new Color(255, 255, 255));
-        p.add(pancelP);
+        backgroundPanel.add(pancelP);
 
         for (int i = 0; i < drawIcon.length; i++) {
             final int index = i;
@@ -59,15 +53,15 @@ public class BeforeGameStart extends JFrame {
             readyBtn.setBackground(new Color(255, 228, 131));
             readyBtn.setForeground(new Color(142, 110, 0));
             readyBtn.setFont(semiMidFont);
-            p.add(readyBtn);
+            backgroundPanel.add(readyBtn);
 
             JButton exitBtn = new JButton("나가기");
             exitBtn.setBounds(616, 411, 90, 30);
             exitBtn.setBackground(new Color(255, 228, 131));
             exitBtn.setForeground(new Color(142, 110, 0));
             exitBtn.setFont(semiMidFont);
-            p.add(exitBtn);
-            add(p);
+            backgroundPanel.add(exitBtn);
+            add(backgroundPanel);
             setVisible(true);
     }
 

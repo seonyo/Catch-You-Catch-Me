@@ -13,6 +13,7 @@ import static java.util.Arrays.asList;
 import static org.zero.common.CommonUtil.*;
 
 public class GameReady extends JFrame{
+	private JPanel backgroundPanel;
 	Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
 	String content="";
 	String name="";
@@ -23,38 +24,30 @@ public class GameReady extends JFrame{
 		int btnX = 155;
 		ArrayList<Integer> flag = new ArrayList<>(asList(0,0,0,0));
 		//배경 패널 생성
-		JPanel p = new JPanel() {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g); // JPanel의 paintComponent() 메소드 호출
-				g.drawImage(background, 0, 0, null);
-			}
-		};
-		p.setBounds(0,0,750,500);
-		p.setLayout(null);
-		add(p);
+		backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
+		add(backgroundPanel);
 
 		JLabel idText = new JLabel("아이디");
 		idText.setBounds(110,142,100,50);
 		idText.setFont(midFont);
-		p.add(idText);
+		backgroundPanel.add(idText);
 
 		JTextField idTf = new JTextField();
 		idTf.setBounds(188, 142, 360,50);
 		idTf.setFont(midFont);
-		p.add(idTf);
+		backgroundPanel.add(idTf);
 
 		JButton idBtn = new JButton("확인");
 		idBtn.setBounds(570,142,80,50);
 		idBtn.setBackground(new Color(255,228,131));
 		idBtn.setFont(midFont);
-		p.add(idBtn);
+		backgroundPanel.add(idBtn);
 
 		JLabel readyText = new JLabel("플레이 할 주제를 선택하세요!");
 		readyText.setBounds(235,210,400,40);
 		readyText.setFont(midFont);
 		readyText.setForeground(new Color(142,110,0));
-		p.add(readyText);
+		backgroundPanel.add(readyText);
 		
 		JButton btn [] = new JButton[4];
 		for(int i=0; i<arrBtn.length; i++){
@@ -64,7 +57,7 @@ public class GameReady extends JFrame{
 			btn[i].setBackground(new Color(255,255,255));
 			btn[i].setFont(midFont);
 			btn[i].setForeground(new Color (142,110,0));
-			p.add(btn[i]);
+			backgroundPanel.add(btn[i]);
 		}
 		//test
 		JButton gamestartBtn = new JButton("게임시작");
@@ -73,7 +66,7 @@ public class GameReady extends JFrame{
 		gamestartBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), 2.0f));
 		gamestartBtn.setForeground(new Color(168, 131, 0));
 		gamestartBtn.setFont(midFont);
-		p.add(gamestartBtn);
+		backgroundPanel.add(gamestartBtn);
 
 		btn[0].addActionListener(event -> {
 			changeBtn(btn[0], 0, flag, btn);
