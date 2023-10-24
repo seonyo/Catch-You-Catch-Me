@@ -86,6 +86,7 @@ public class Result extends JFrame {
 			JLabel rankBackImgLabel = new JLabel(new ImageIcon(Main.class.getResource("/static/img/rank_background.png")));
 			rankBackImgLabel.setBounds(-107, 0, CommonUtil.WIDTH, 45);
 			this.add(rankBackImgLabel);
+
 		}
 	}
 }
