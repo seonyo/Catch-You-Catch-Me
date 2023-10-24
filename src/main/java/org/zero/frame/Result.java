@@ -1,13 +1,8 @@
 package org.zero.frame;
-
 import org.zero.common.CommonUtil;
-
 import javax.swing.*;
 import java.awt.*;
-
-import static javax.swing.BorderFactory.createEmptyBorder;
 import static org.zero.common.CommonUtil.*;
-
 public class Result extends JFrame {
 	private JPanel backgroundPanel;
 	private JLabel title;
@@ -16,23 +11,17 @@ public class Result extends JFrame {
 	private JButton beforeBtn;
 	private Image background = new ImageIcon(Main.class.getResource("/static/img/result.png")).getImage();
 	private ImageIcon preBtnImg = new ImageIcon(Main.class.getResource("/static/img/beforeBtn.png"));
-
 	public Result() {
 		// 기본 설정
 		CommonUtil.settings(this);
-
 		// 배경 이미지
 		backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
-		rankBackgroundPanel.setBackground(new Color(0,0,0,0));
-		rankBackgroundPanel.setBounds(100, 150, 550, 300);
-
 		// 제목
 		title = new JLabel("Result");
 		title.setFont(CommonUtil.titleFont);
 		title.setForeground(CommonUtil.titleColor);
 		title.setBounds(330, 93, 120, 40);
 		backgroundPanel.add(title);
-
 		// 랭킹 패널 생성
 		rankPanels = new RankPanel[10];
 		for (int i = 0; i < rankPanels.length; i++) {
@@ -57,40 +46,34 @@ public class Result extends JFrame {
 
 		// 스크롤을 포함한 랭킹 패널 생성
 		JScrollPane scrollPane = new JScrollPane(rankBackgroundPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBounds(90, 150, 570, 300); // 조절 가능
-//		scrollPane.setBackground(Color.BLUE);
-		scrollPane.setBackground(new Color(0,0,0,0));
-		scrollPane.setBorder(createEmptyBorder());
+		scrollPane.setBounds(10, 155, WIDTH, 300); // 조절 가능
 		backgroundPanel.add(scrollPane);
 
 		// 화면 표시
+		rankBackgroundPanel.setBackground(new Color(0,0,0,0));
+		rankBackgroundPanel.setBounds(100, 150, 550, 300);
 
+		backgroundPanel.add(rankBackgroundPanel);
 		this.add(backgroundPanel);
 		this.setVisible(true);
 	}
-
 	public static void main(String[] args) {
 		new Result();
 	}
-
 	private class RankPanel extends JPanel {
 		public RankPanel(int rank) {
 			this.setLayout(null);
-
 			// 등수
 			JLabel rankLabel = new JLabel(String.valueOf(rank));
 			rankLabel.setFont(CommonUtil.semiMidFont);
 			rankLabel.setBounds(30, 10, 20, 22);
 			this.add(rankLabel);
-
-
 			// 플레이타임
 			JLabel timeLabel = new JLabel("30:30");
 			timeLabel.setFont(CommonUtil.semiLargeFont);
 			timeLabel.setForeground(CommonUtil.titleColor);
 			timeLabel.setBounds(440, 10, 120, 20);
 			this.add(timeLabel);
-
 			// 팀원 명단
 			JLabel[] players = new JLabel[4];
 			for (int i = 0; i < players.length; i++) {
@@ -99,11 +82,11 @@ public class Result extends JFrame {
 				players[i].setBounds(80 + i * 80, 12, 120, 20);
 				this.add(players[i]);
 			}
-
 			// 랭킹 배경 이미지
 			JLabel rankBackImgLabel = new JLabel(new ImageIcon(Main.class.getResource("/static/img/rank_background.png")));
 			rankBackImgLabel.setBounds(-107, 0, CommonUtil.WIDTH, 45);
 			this.add(rankBackImgLabel);
+
 		}
 	}
 }
