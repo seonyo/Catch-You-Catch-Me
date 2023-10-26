@@ -10,7 +10,7 @@ public class ConnectionMgr {
 	private static String password = "gkdms~!1357";
 
 	// Connection 가져오기
-	public static Connection getConnection() {
+	public static Connection getConnection(String jdbcUrl) {
 		if ( conn == null ) {
 			conn = makeConnection();
 		}
@@ -44,7 +44,7 @@ public class ConnectionMgr {
 	
 	public static void main(String[] args) throws SQLException {
 		// 커넥션 객체 만들기
-		conn = getConnection();
+		conn = getConnection(DB.MySQL.JDBC_URL);
 
 		stmt = conn.createStatement();
 		ResultSet rs;
