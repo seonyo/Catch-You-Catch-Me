@@ -106,6 +106,7 @@ public class GameReady extends JFrame{
 			else {
 				JOptionPane.showMessageDialog(null, "아이디가 정상적으로 등록 되었습니다.");
 				idBtn.setBackground(new Color(198,198,198));
+				idTf.setEnabled(false);
 				saveUserName(name);// 사용자 이름 db에 저장
 			}
 		});

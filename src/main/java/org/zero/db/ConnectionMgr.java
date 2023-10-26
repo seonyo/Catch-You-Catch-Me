@@ -67,24 +67,24 @@ public class ConnectionMgr {
 				"category VARCHAR(20)" +
 				");");
 
-		// 테이블에 데이터 추가
-		stmt.executeUpdate("INSERT INTO person (name, team_id, captain, category) VALUES ('noh', 1, 1, '동물')");
+		// 테이블에 샘플 데이터 추가
+		//stmt.executeUpdate("INSERT INTO person (name, team_id, captain, category) VALUES ('noh', 1, 1, '동물')");
 
 		// 쿼리의 결과 값(Select된 값)을 rs에 저장
-		rs = stmt.executeQuery("SELECT * FROM person");
+		//rs = stmt.executeQuery("SELECT * FROM person");
 
-		while ( rs.next()) {
-			System.out.print(rs.getString("id")+" ");
-			System.out.print(rs.getString("name")+" ");
-			System.out.print(rs.getString("team_id")+" ");
-			System.out.print(rs.getString("captain")+" ");
-			System.out.print(rs.getString("category")+" ");
-		}
+//		while ( rs.next()) {
+//			System.out.print(rs.getString("id")+" ");
+//			System.out.print(rs.getString("name")+" ");
+//			System.out.print(rs.getString("team_id")+" ");
+//			System.out.print(rs.getString("captain")+" ");
+//			System.out.print(rs.getString("category")+" ");
+//		}
 
 
 		// 사용 후 close
 		stmt.close();
-		rs.close();
+//		rs.close();
 		closeConnection();
 	}
 }
