@@ -61,9 +61,9 @@ public class ConnectionMgr {
 		// 테이블 생성
 		stmt.executeUpdate("CREATE TABLE person (" +
 				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
-				"name VARCHAR(20) NOT NULL, " +
-				"team_id INT NOT NULL, " +
-				"captain TINYINT(1) NOT NULL, " +
+				"name VARCHAR(20), " +
+				"team_id INT, " +
+				"captain TINYINT(1), " +
 				"category VARCHAR(20)" +
 				");");
 

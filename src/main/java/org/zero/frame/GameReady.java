@@ -19,11 +19,13 @@ import static org.zero.db.ConnectionMgr.getConnection;
 
 public class GameReady extends JFrame{
 	private JPanel backgroundPanel;
-	Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
-	String content="";
-	String name="";
+	private Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
+	private String content="";
+	private String name="";
+	private int categoryIndex;
 	public static Connection conn = null;
 	public static Statement stmt = null;
+	private int user_id;// primary key
 	public GameReady() {
 		// 시작기본세팅 메서드
 		settings(this);
@@ -77,18 +79,22 @@ public class GameReady extends JFrame{
 
 		btn[0].addActionListener(event -> {
 			changeBtn(btn[0], 0, flag, btn);
+			categoryIndex = 0;
 		});
 
 		btn[1].addActionListener(event -> {
 			changeBtn(btn[1], 1, flag, btn);
+			categoryIndex = 1;
 		});
 
 		btn[2].addActionListener(event -> {
 			changeBtn(btn[2], 2, flag, btn);
+			categoryIndex = 2;
 		});
 
 		btn[3].addActionListener(event -> {
 			changeBtn(btn[3], 3, flag, btn);
+			categoryIndex = 3;
 
 		});
 
@@ -100,6 +106,7 @@ public class GameReady extends JFrame{
 			else {
 				JOptionPane.showMessageDialog(null, "아이디가 정상적으로 등록 되었습니다.");
 				idBtn.setBackground(new Color(198,198,198));
+				saveUserName(name);// 사용자 이름 db에 저장
 			}
 		});
 
@@ -113,7 +120,7 @@ public class GameReady extends JFrame{
 			}
 			else{
 				dispose();
-				saveUserIdToDatabase(name, 1);
+				saveGameCategory(categoryIndex);// 카테고리 db에 저장
 				new BeforeGameStart();
 			}
 		});
@@ -138,22 +145,57 @@ public class GameReady extends JFrame{
 		}
 	}
 
-	private void saveUserIdToDatabase(String userId, int categoryIndex) {
+	private void saveUserName(String userId) {
 		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
 		try {
 			conn = getConnection(DB.MySQL.JDBC_URL);
-			String query = "INSERT INTO person (name, team_id, captain, category) VALUES ("+name+", 1, 1, "+categoryIndex+")";
+			String query = "INSERT INTO person (name) VALUES ('"+name+"')";
+			stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+
+			// 현재 사용자의 id(primary key)값 알기
+			ResultSet rs;
+			rs = stmt.executeQuery("SELECT * FROM person");
+			while ( rs.next()) {
+				this.user_id = Integer.parseInt(rs.getString("id"));
+			}
+
+			System.out.println(this.user_id);
+
+			// 사용 후 close
+			stmt.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("사용자 이름 저장 실패");
+		}
+	}
+
+	private void saveGameCategory(int categoryIndex) {
+		String category = "";
+		// 카테고리 찾기
+		switch (categoryIndex) {
+			case 0: category = "동물"; break;
+			case 1: category = "음식"; break;
+			case 2: category = "사물"; break;
+			case 3: category = "장소"; break;
+		}
+
+		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
+		try {
+			String query = "UPDATE person SET category = '"+category+"' WHERE id = "+this.user_id;
 			stmt = conn.createStatement();
 			ResultSet rs;
 			stmt.executeUpdate(query);
 			rs = stmt.executeQuery("SELECT * FROM person");
 
+			// 테스트
 			while ( rs.next()) {
 				System.out.print(rs.getString("id")+" ");
 				System.out.print(rs.getString("name")+" ");
 				System.out.print(rs.getString("team_id")+" ");
 				System.out.print(rs.getString("captain")+" ");
-				System.out.print(rs.getString("category")+" ");
+				System.out.println(rs.getString("category")+" ");
 			}
 
 			// 사용 후 close
@@ -162,6 +204,7 @@ public class GameReady extends JFrame{
 			closeConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("게임 카테고리 저장 실패");
 		}
 	}
 
