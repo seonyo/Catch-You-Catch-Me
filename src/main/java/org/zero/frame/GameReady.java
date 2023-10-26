@@ -2,21 +2,28 @@ package org.zero.frame;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
 
 import org.zero.common.CommonUtil;
+import org.zero.db.ConnectionMgr;
+import org.zero.db.DB;
 
 import static java.util.Arrays.asList;
 import static org.zero.common.CommonUtil.*;
+import static org.zero.db.ConnectionMgr.closeConnection;
+import static org.zero.db.ConnectionMgr.getConnection;
 
 public class GameReady extends JFrame{
 	private JPanel backgroundPanel;
 	Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
 	String content="";
 	String name="";
+	public static Connection conn = null;
+	public static Statement stmt = null;
 	public GameReady() {
 		// 시작기본세팅 메서드
 		settings(this);
@@ -106,6 +113,7 @@ public class GameReady extends JFrame{
 			}
 			else{
 				dispose();
+				saveUserIdToDatabase(name, 1);
 				new BeforeGameStart();
 			}
 		});
@@ -127,6 +135,46 @@ public class GameReady extends JFrame{
 		} else {
 			btn.setBackground(new Color(255, 255, 255));
 			flag.set(index, 0);
+		}
+	}
+
+	private void saveUserIdToDatabase(String userId, int categoryIndex) {
+		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
+		try {
+			conn = getConnection(DB.MySQL.JDBC_URL);
+			String query = "INSERT INTO person (name, team_id, captain, category) VALUES ("+name+", 1, 1, "+categoryIndex+")";
+			stmt = conn.createStatement();
+			ResultSet rs;
+			stmt.executeUpdate(query);
+			rs = stmt.executeQuery("SELECT * FROM person");
+
+			while ( rs.next()) {
+				System.out.print(rs.getString("id")+" ");
+				System.out.print(rs.getString("name")+" ");
+				System.out.print(rs.getString("team_id")+" ");
+				System.out.print(rs.getString("captain")+" ");
+				System.out.print(rs.getString("category")+" ");
+			}
+
+			// 사용 후 close
+			stmt.close();
+			rs.close();
+			closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void saveUserTopicToDatabase(String userId, String topic) {
+		// 데이터베이스 연결을 설정하고 사용자가 선택한 주제를 업데이트합니다.
+		try {
+			conn = getConnection(DB.MySQL.JDBC_URL);
+			String query = "UPDATE person SET selected_topic = ? WHERE user_id = ?";
+			stmt = conn.prepareStatement(query);
+
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
