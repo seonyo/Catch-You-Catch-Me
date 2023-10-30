@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Vector;
 
 import static org.zero.common.CommonUtil.*;
 
@@ -26,7 +27,10 @@ public class BeforeGameStart extends JFrame {
     Image trash = new ImageIcon(Main.class.getResource("/static/img/trash.png")).getImage();
 
     private Color currentColor = new Color(0,0,0);
-
+    private int currentPenSize = 5; // 펜 굵기
+    private int startX, startY; // 그림 그리기 시작 위치
+    private Vector <Integer> vector = new Vector<Integer>();
+    private int x1Temp, y1Temp;
     Image drawIcon[] = {red,orange,yellow,green,blue, purple,pink,black,erase,trash};
 
     public BeforeGameStart() {
@@ -87,32 +91,42 @@ public class BeforeGameStart extends JFrame {
 
     class DrawingPanel extends JPanel {
 
-        private int prevX, prevY;
-
-        public void setColor(Color color) {currentColor = color;}
-
         public  DrawingPanel() {
             addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    prevX = e.getX();
-                    prevY = e.getY();
+                public void mousePressed(MouseEvent e) {
+                    x1Temp = e.getX();
+                    y1Temp = e.getY();
+                    vector.add(x1Temp);
+                    vector.add(y1Temp);
+                    System.out.println("눌럿다");
                 }
-            });
 
+            });
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    x1Temp = e.getX();
+                    y1Temp = e.getY();
+                    System.out.println("야");
+                }
+
+            });
             addMouseMotionListener(new MouseAdapter() {
                 @Override
                 public void mouseDragged(MouseEvent e) {
-                    int x = e.getX();
-                    int y = e.getY();
 
                     // Draw a line with the current color
                     Graphics2D g = (Graphics2D) getGraphics();
                     g.setColor(currentColor);
-                    g.drawLine(prevX, prevY, x, y);
+                    g.drawLine(x1Temp, y1Temp, e.getX(), e.getY());
                     g.setStroke(new BasicStroke(20.0f));
-                    prevX = x;
-                    prevY = y;
+                    x1Temp = e.getX();
+                    y1Temp = e.getY();
+                    vector.add(e.getX());
+                    vector.add(e.getY());
+                    System.out.println("드래그르륵");
+
                 }
             });
         }
