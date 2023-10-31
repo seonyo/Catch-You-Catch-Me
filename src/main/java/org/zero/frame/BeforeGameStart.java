@@ -43,7 +43,7 @@ public class BeforeGameStart extends JFrame {
         pancelP.setBackground(new Color(255, 255, 255));
         backgroundPanel.add(pancelP);
 
-        JPanel drawingPanel = new DrawingPanel();
+        DrawingPanel drawingPanel = new DrawingPanel();
         this.add(drawingPanel);
         drawingPanel.setBackground(new Color(255,255,255));
         drawingPanel.setBounds(40, 90, 470, 250);
@@ -64,6 +64,8 @@ public class BeforeGameStart extends JFrame {
                         case 5: currentColor = new Color(162,10,255); break;
                         case 6: currentColor = new Color(255,60,212); break;
                         case 7: currentColor = new Color(0,0,0); break;
+                        case 8 : currentColor = new Color(255,255,255); break;
+                        case 9 : drawingPanel.clearDrawing(); vector.clear(); break;
                     }
                 }
             });
@@ -90,8 +92,14 @@ public class BeforeGameStart extends JFrame {
 
 
     class DrawingPanel extends JPanel {
+        public void clearDrawing() {
+            Graphics g = getGraphics();
+            g.setColor(getBackground());
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
 
-        public  DrawingPanel() {
+
+        public DrawingPanel() {
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -120,7 +128,7 @@ public class BeforeGameStart extends JFrame {
                     Graphics2D g = (Graphics2D) getGraphics();
                     g.setColor(currentColor);
                     g.drawLine(x1Temp, y1Temp, e.getX(), e.getY());
-                    g.setStroke(new BasicStroke(20.0f));
+                    g.setStroke(new BasicStroke(20));
                     x1Temp = e.getX();
                     y1Temp = e.getY();
                     vector.add(e.getX());
@@ -130,6 +138,7 @@ public class BeforeGameStart extends JFrame {
                 }
             });
         }
+
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new BeforeGameStart());
