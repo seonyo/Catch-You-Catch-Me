@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.Vector;
 
+import static java.lang.System.out;
 import static org.zero.common.CommonUtil.*;
 
 
@@ -57,7 +58,7 @@ public class BeforeGameStart2 extends JFrame {
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("이미지 " + index + "가 클릭되었습니다.");
+                    out.println("이미지 " + index + "가 클릭되었습니다.");
                     switch (index){
                         case 0: currentColor = new Color(255,12,12); break;
                         case 1: currentColor = new Color(248,89,0); break;
@@ -87,18 +88,17 @@ public class BeforeGameStart2 extends JFrame {
         exitBtn.setForeground(new Color(142, 110, 0));
         exitBtn.setFont(semiMidFont);
         backgroundPanel.add(exitBtn);
+        add(backgroundPanel);
 
-        // 채팅
-        JPanel chatPanel = new JPanel();
-        chatPanel.setBounds(500,20, 300,300);
+        JPanel chattingPn = new JPanel();
+        chattingPn.setBounds(530,140, 170,200);
 
-        backgroundPanel.add(chatPanel);
         JTextArea messageArea = new JTextArea();
         messageArea.setEditable(false);
-        chatPanel.add(new JScrollPane(messageArea), BorderLayout.CENTER);
+        chattingPn.add(new JScrollPane(messageArea), BorderLayout.CENTER);
 
         JTextField textField = new JTextField();
-        chatPanel.add(textField, BorderLayout.SOUTH);
+        chattingPn.add(textField, BorderLayout.SOUTH);
 
         textField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -107,7 +107,7 @@ public class BeforeGameStart2 extends JFrame {
             }
         });
 
-        this.add(backgroundPanel);
+        backgroundPanel.add(chattingPn);
         this.setVisible(true);
 
         try {
@@ -134,9 +134,9 @@ public class BeforeGameStart2 extends JFrame {
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
         }
-        public DrawingPanel() {
-            setBackground(Color.WHITE); // 배경 색상을 흰색으로 설정
 
+
+        public DrawingPanel() {
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -144,22 +144,23 @@ public class BeforeGameStart2 extends JFrame {
                     y1Temp = e.getY();
                     vector.add(x1Temp);
                     vector.add(y1Temp);
-                    System.out.println("눌렀다");
+                    out.println("눌럿다");
                 }
-            });
 
+            });
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     x1Temp = e.getX();
                     y1Temp = e.getY();
-                    System.out.println("야");
+                    out.println("야");
                 }
-            });
 
+            });
             addMouseMotionListener(new MouseAdapter() {
                 @Override
                 public void mouseDragged(MouseEvent e) {
+
                     // Draw a line with the current color
                     Graphics2D g = (Graphics2D) getGraphics();
                     g.setColor(currentColor);
@@ -169,10 +170,12 @@ public class BeforeGameStart2 extends JFrame {
                     y1Temp = e.getY();
                     vector.add(e.getX());
                     vector.add(e.getY());
-                    System.out.println("드래그르륵");
+                    out.println("드래그르륵");
+
                 }
             });
         }
+
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new BeforeGameStart2());
