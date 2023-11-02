@@ -43,14 +43,14 @@ public class BeforeGameStart2 extends JFrame {
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         JPanel pancelP = new JPanel();
-        pancelP.setBounds(40, 350, 470, 107);
+        pancelP.setBounds(40, 360, 470, 107);
         pancelP.setBackground(new Color(255, 255, 255));
         backgroundPanel.add(pancelP);
 
         DrawingPanel drawingPanel = new DrawingPanel();
         this.add(drawingPanel);
         drawingPanel.setBackground(new Color(255,255,255));
-        drawingPanel.setBounds(40, 90, 470, 250);
+        drawingPanel.setBounds(40, 90, 470, 265);
 
         for (int i = 0; i < drawIcon.length; i++) {
             int index = i;
@@ -90,20 +90,20 @@ public class BeforeGameStart2 extends JFrame {
         backgroundPanel.add(exitBtn);
         add(backgroundPanel);
 
-        JPanel chattingPn = new JPanel();
-        chattingPn.setBounds(530,140, 170,200);
+        JPanel chattingPn = new JPanel(new BorderLayout());
+        chattingPn.setBounds(525,140, 180,210);
 
         JTextArea messageArea = new JTextArea();
         messageArea.setEditable(false);
         chattingPn.add(new JScrollPane(messageArea), BorderLayout.CENTER);
 
-        JTextField textField = new JTextField();
-        chattingPn.add(textField, BorderLayout.SOUTH);
+        JTextField chatInputField = new JTextField(10);
+        chattingPn.add(chatInputField, BorderLayout.SOUTH);
 
-        textField.addActionListener(new ActionListener() {
+        chatInputField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                sendMessage(textField.getText());
-                textField.setText("");
+                sendMessage(chatInputField.getText());
+                chatInputField.setText("");
             }
         });
 
