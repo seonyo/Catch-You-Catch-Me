@@ -5,7 +5,9 @@ import org.zero.common.CommonUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -36,21 +38,24 @@ public class BeforeGameStart2 extends JFrame {
     private int x1Temp, y1Temp;
     Image drawIcon[] = {red,orange,yellow,green,blue, purple,pink,black,erase,trash};
     private PrintWriter out;
+    private JTextArea textArea;
+    private JTextField textField;
 
     public BeforeGameStart2() {
+        SwingUtilities.invokeLater(() -> {
         CommonUtil.settings(this);
 
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         JPanel pancelP = new JPanel();
-        pancelP.setBounds(40, 350, 470, 107);
+        pancelP.setBounds(40, 360, 470, 107);
         pancelP.setBackground(new Color(255, 255, 255));
         backgroundPanel.add(pancelP);
 
         DrawingPanel drawingPanel = new DrawingPanel();
         this.add(drawingPanel);
         drawingPanel.setBackground(new Color(255,255,255));
-        drawingPanel.setBounds(40, 90, 470, 250);
+        drawingPanel.setBounds(40, 90, 470, 265);
 
         for (int i = 0; i < drawIcon.length; i++) {
             int index = i;
@@ -90,42 +95,53 @@ public class BeforeGameStart2 extends JFrame {
         backgroundPanel.add(exitBtn);
         add(backgroundPanel);
 
-        JPanel chattingPn = new JPanel();
-        chattingPn.setBounds(530,140, 170,200);
+        JPanel chattingPn = new JPanel(new BorderLayout());
+        chattingPn.setBounds(525,140, 180,210);
 
-        JTextArea messageArea = new JTextArea();
-        messageArea.setEditable(false);
-        chattingPn.add(new JScrollPane(messageArea), BorderLayout.CENTER);
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        chattingPn.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        JTextField textField = new JTextField();
+        textField = new JTextField();
         chattingPn.add(textField, BorderLayout.SOUTH);
 
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sendMessage(textField.getText());
-                textField.setText("");
-            }
+        textField.addActionListener( e -> {
+            sendMessage(textField.getText());
+            textField.setText("");
         });
 
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
-
-        try {
-            Socket socket = new Socket("localhost", 3000);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            Scanner in = new Scanner(socket.getInputStream());
-
-            while (in.hasNextLine()) {
-                String message = in.nextLine();
-                messageArea.append(message + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
+        connectToServer();
     }
 
     private void sendMessage(String message) {
         out.println(message);
+    }
+
+    private void appendToTextArea(String message) {
+        SwingUtilities.invokeLater(() -> {
+            textArea.append(message + "\n");
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        });
+    }
+
+    private void connectToServer() {
+        new Thread(() -> {
+            try {
+                Socket socket = new Socket("localhost", 8090); // 서버 주소와 포트를 설정하세요
+                out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                while (true) {
+                    String message = in.readLine();
+                    appendToTextArea(message);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     class DrawingPanel extends JPanel {
