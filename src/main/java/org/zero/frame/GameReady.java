@@ -150,13 +150,13 @@ public class GameReady extends JFrame{
 		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
 		try {
 			conn = getConnection(DB.MySQL.JDBC_URL);
-			String query = "INSERT INTO person (name) VALUES ('"+name+"')";
+			String query = "INSERT INTO user (name) VALUES ('"+name+"')";
 			stmt = conn.createStatement();
 			stmt.executeUpdate(query);
 
 			// 현재 사용자의 id(primary key)값 알기
 			ResultSet rs;
-			rs = stmt.executeQuery("SELECT * FROM person");
+			rs = stmt.executeQuery("SELECT * FROM user");
 			while ( rs.next()) {
 				this.user_id = Integer.parseInt(rs.getString("id"));
 			}
@@ -164,7 +164,6 @@ public class GameReady extends JFrame{
 			System.out.println(this.user_id);
 
 			// 사용 후 close
-			stmt.close();
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -184,11 +183,10 @@ public class GameReady extends JFrame{
 
 		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
 		try {
-			String query = "UPDATE person SET category = '"+category+"' WHERE id = "+this.user_id;
-			stmt = conn.createStatement();
+			String query = "UPDATE user SET category = '"+category+"' WHERE id = "+this.user_id;
 			ResultSet rs;
 			stmt.executeUpdate(query);
-			rs = stmt.executeQuery("SELECT * FROM person");
+			rs = stmt.executeQuery("SELECT * FROM user");
 
 			// 테스트
 			while ( rs.next()) {
@@ -213,7 +211,7 @@ public class GameReady extends JFrame{
 		// 데이터베이스 연결을 설정하고 사용자가 선택한 주제를 업데이트합니다.
 		try {
 			conn = getConnection(DB.MySQL.JDBC_URL);
-			String query = "UPDATE person SET selected_topic = ? WHERE user_id = ?";
+			String query = "UPDATE user SET selected_topic = ? WHERE user_id = ?";
 			stmt = conn.prepareStatement(query);
 
 			conn.close();
