@@ -1,6 +1,7 @@
 package org.zero.frame;
 
 import org.zero.common.CommonUtil;
+import org.zero.db.DB;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +11,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 import static org.zero.common.CommonUtil.*;
+import static org.zero.db.ConnectionMgr.getConnection;
 
 
 public class BeforeGameStart extends JFrame {
@@ -38,11 +44,15 @@ public class BeforeGameStart extends JFrame {
     private PrintWriter out;
     private JTextArea textArea;
     private JTextField textField;
+    public static Connection conn = null;
+    public static Statement stmt = null;
+    private int userId;
+    private String userName;
 
-    public BeforeGameStart() {
+    public BeforeGameStart(String userName) {
         SwingUtilities.invokeLater(() -> {
             CommonUtil.settings(this);
-
+            this.userName = userName;
             backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
             JPanel pancelP = new JPanel();
@@ -141,7 +151,7 @@ public class BeforeGameStart extends JFrame {
 
     private void appendToTextArea(String message) {
         SwingUtilities.invokeLater(() -> {
-            textArea.append(message + "\n");
+            textArea.append(this.userName+": "+message + "\n");
             textArea.setCaretPosition(textArea.getDocument().getLength());
         });
     }
@@ -179,7 +189,7 @@ public class BeforeGameStart extends JFrame {
                     y1Temp = e.getY();
                     vector.add(x1Temp);
                     vector.add(y1Temp);
-                    out.println("눌럿다");
+
                 }
 
             });
@@ -188,7 +198,7 @@ public class BeforeGameStart extends JFrame {
                 public void mouseReleased(MouseEvent e) {
                     x1Temp = e.getX();
                     y1Temp = e.getY();
-                    out.println("야");
+
                 }
 
             });
@@ -205,7 +215,6 @@ public class BeforeGameStart extends JFrame {
                     y1Temp = e.getY();
                     vector.add(e.getX());
                     vector.add(e.getY());
-                    out.println("드래그르륵");
 
                 }
             });
@@ -214,7 +223,7 @@ public class BeforeGameStart extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new BeforeGameStart());
+        SwingUtilities.invokeLater(() -> new BeforeGameStart("길동"));
     }
 
 }
