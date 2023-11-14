@@ -72,9 +72,7 @@ public class GameReady extends JFrame{
 		});
 
 		gamestartBtn.addActionListener(event -> {
-			if (content.equals("")) {
-				JOptionPane.showMessageDialog(null, "주제를 선택하세요.");
-			} else if (name.equals("")) {
+			if (name.equals("")) {
 				JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
 			} else {
 				dispose();

@@ -1,6 +1,7 @@
 package org.zero.frame;
 
 import org.zero.common.CommonUtil;
+import org.zero.db.DB;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,12 +10,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.Vector;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static org.zero.common.CommonUtil.*;
+import static org.zero.db.ConnectionMgr.getConnection;
 
 
 public class BeforeGameStart extends JFrame {
@@ -41,9 +45,11 @@ public class BeforeGameStart extends JFrame {
     private static JTextField messageField;
     private static PrintWriter writer;
     private static String userName;
-    public static Connection conn = null;
-    public static Statement stmt = null;
+    private static Connection conn = null;
+    private static Statement stmt = null;
+    private static ResultSet rs = null;
     private int prevMax = 0; // 이전 최대 값
+    private String currentTopic;// 현재 주제
     public static int userCnt = 0;// 현재 유저 수
     public static int userReadyNowCnt = 0;// 현재 준비완료된 유저 수
 
@@ -160,7 +166,7 @@ public class BeforeGameStart extends JFrame {
 
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
-
+        findTopic();
         connectToServer();
     }
 
@@ -181,15 +187,59 @@ public class BeforeGameStart extends JFrame {
     }
 
     private static void sendMessage() {
-
+        String correct = "구토";
         String message = messageField.getText();
         writer.println(message);
-        if (message.contains("내가만든쿠키")) {
-            writer.println("[ 정답자 ]");
+        if (message.replaceAll(" ", "").contains(correct)) {
+            writer.println("[ 정답: " + correct + " ]");
         }
         writer.flush();
         messageField.setText("");
 
+    }
+
+    private void focusRecentChat(JScrollPane scrollPane) {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (e.getAdjustable().getMaximum() != prevMax) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
+                }
+            }
+        });
+    }
+
+    // 주제 가져오기
+    private void findTopic() {
+        // 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
+        try {
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            stmt = conn.createStatement();
+
+            // 현재 주제 정하기
+            rs = stmt.executeQuery("SELECT COUNT(*) FROM topic");
+
+            // 현재 topic table의 사이즈 구하기
+            int rowCount = 0;
+            while (rs.next()) {
+                rowCount = Integer.parseInt(rs.getString("count(*)"));
+            }
+
+            // 난수 생성
+            double random = Math.random();
+            int randomValue = (int) (random * rowCount + 1);
+
+            // 랜덤 주제 가져오기
+            rs = stmt.executeQuery("SELECT * FROM topic WHERE id = " + randomValue);
+            while (rs.next())
+                this.currentTopic = rs.getString("name");
+            System.out.println(this.currentTopic);
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("주제 불러오기 실패");
+        }
     }
 
     static class IncomingReader implements Runnable {
@@ -260,17 +310,6 @@ public class BeforeGameStart extends JFrame {
             });
         }
 
-    }
-
-    public void focusRecentChat(JScrollPane scrollPane) {
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (e.getAdjustable().getMaximum() != prevMax) {
-                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
-                }
-            }
-        });
     }
 
     public static void main(String[] args) {
