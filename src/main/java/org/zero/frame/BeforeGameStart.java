@@ -229,7 +229,6 @@ public class BeforeGameStart extends JFrame {
                     y1Temp = e.getY();
                     vector.add(e.getX());
                     vector.add(e.getY());
-
                 }
             });
         }
