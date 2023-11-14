@@ -78,7 +78,6 @@ public class GameReady extends JFrame{
 				JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
 			} else {
 				dispose();
-				saveGameCategory(categoryIndex);// 카테고리 db에 저장
 				new BeforeGameStart(this.userName);
 			}
 		});
@@ -125,55 +124,6 @@ public class GameReady extends JFrame{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("사용자 이름 저장 실패");
-		}
-	}
-
-	private void saveGameCategory(int categoryIndex) {
-		String category = "";
-		// 카테고리 찾기
-		switch (categoryIndex) {
-			case 0: category = "동물"; break;
-			case 1: category = "음식"; break;
-			case 2: category = "사물"; break;
-			case 3: category = "장소"; break;
-		}
-
-		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
-		try {
-			String query = "UPDATE user SET category = '"+category+"' WHERE id = "+this.userId;
-			ResultSet rs;
-			stmt.executeUpdate(query);
-			rs = stmt.executeQuery("SELECT * FROM user");
-
-			// 테스트
-			while ( rs.next()) {
-				System.out.print(rs.getString("id")+" ");
-				System.out.print(rs.getString("name")+" ");
-				System.out.print(rs.getString("team_id")+" ");
-				System.out.print(rs.getString("captain")+" ");
-				System.out.println(rs.getString("category")+" ");
-			}
-
-			// 사용 후 close
-			stmt.close();
-			rs.close();
-			closeConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("게임 카테고리 저장 실패");
-		}
-	}
-
-	private void saveUserTopicToDatabase(String userId, String topic) {
-		// 데이터베이스 연결을 설정하고 사용자가 선택한 주제를 업데이트합니다.
-		try {
-			conn = getConnection(DB.MySQL.JDBC_URL);
-			String query = "UPDATE user SET selected_topic = ? WHERE user_id = ?";
-			stmt = conn.prepareStatement(query);
-
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
 

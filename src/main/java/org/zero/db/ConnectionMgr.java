@@ -7,8 +7,8 @@ public class ConnectionMgr {
 	private static Statement stmt;
 	private static String url = DB.MySQL.JDBC_URL;
 	private static String user = "root";
-//	private static String password = "gkdms~!1357";
-	private static String password = "990327";
+	private static String password = "gkdms~!1357";
+//	private static String password = "990327";
 
 	// Connection 가져오기
 	public static Connection getConnection(String jdbcUrl) {
@@ -59,13 +59,12 @@ public class ConnectionMgr {
 		// 데이터베이스 catchmind_db 사용하겠다고 선언
 		stmt.executeUpdate("USE catchmind_db");
 
+		stmt.executeUpdate("DROP TABLE IF EXISTS user");
 		// 테이블 생성
 		stmt.executeUpdate("CREATE TABLE user (" +
 				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
 				"name VARCHAR(20), " +
-				"team_id INT, " +
-				"captain TINYINT(1), " +
-				"category VARCHAR(20)" +
+				"team_id INT" +
 				");");
 
 		// 테이블에 샘플 데이터 추가
