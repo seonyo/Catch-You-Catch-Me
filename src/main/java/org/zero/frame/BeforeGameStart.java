@@ -43,8 +43,9 @@ public class BeforeGameStart extends JFrame {
     private static String userName;
     public static Connection conn = null;
     public static Statement stmt = null;
-    private static int userCnt = 0;
     private int prevMax = 0; // 이전 최대 값
+    public static int userCnt = 0;// 현재 유저 수
+    public static int userReadyNowCnt = 0;// 현재 준비완료된 유저 수
 
     public BeforeGameStart(String userName) {
 
@@ -68,7 +69,6 @@ public class BeforeGameStart extends JFrame {
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    writer.println("이미지 " + index + "가 클릭되었습니다.");
                     switch (index) {
                         case 0:
                             currentColor = new Color(255, 12, 12);
@@ -108,6 +108,14 @@ public class BeforeGameStart extends JFrame {
         }
 
         JButton readyBtn = new JButton("준비");
+        readyBtn.addActionListener(e -> {
+            userReadyNowCnt++;
+            writer.println("준비완료: " + userReadyNowCnt);
+            if (userCnt == userReadyNowCnt) {
+                this.setVisible(false);
+                new GameEnd();
+            }
+        });
         readyBtn.setBounds(616, 368, 90, 30);
         readyBtn.setBackground(new Color(255, 228, 131));
         readyBtn.setForeground(new Color(142, 110, 0));
@@ -162,6 +170,8 @@ public class BeforeGameStart extends JFrame {
             writer = new PrintWriter(socket.getOutputStream());
             writer.println(userName);
             writer.flush();
+            userCnt++;
+            System.out.println("유저수: " + userCnt);
 
             Thread readerThread = new Thread(new IncomingReader(socket));
             readerThread.start();
@@ -171,12 +181,15 @@ public class BeforeGameStart extends JFrame {
     }
 
     private static void sendMessage() {
-        SwingUtilities.invokeLater(() -> {
-            String message = messageField.getText();
-            writer.println(message);
-            writer.flush();
-            messageField.setText("");
-        });
+
+        String message = messageField.getText();
+        writer.println(message);
+        if (message.contains("내가만든쿠키")) {
+            writer.println("[ 정답자 ]");
+        }
+        writer.flush();
+        messageField.setText("");
+
     }
 
     static class IncomingReader implements Runnable {
