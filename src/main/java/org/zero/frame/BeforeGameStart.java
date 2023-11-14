@@ -61,7 +61,6 @@ public class BeforeGameStart extends JFrame {
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        out.println("이미지 " + index + "가 클릭되었습니다.");
                         switch (index) {
                             case 0:
                                 currentColor = new Color(255, 12, 12);
@@ -106,6 +105,7 @@ public class BeforeGameStart extends JFrame {
             readyBtn.setForeground(new Color(142, 110, 0));
             readyBtn.setFont(semiMidFont);
             backgroundPanel.add(readyBtn);
+
             JButton exitBtn = new JButton("나가기");
             exitBtn.setBounds(616, 411, 90, 30);
             exitBtn.setBackground(new Color(255, 228, 131));
@@ -179,7 +179,6 @@ public class BeforeGameStart extends JFrame {
                     y1Temp = e.getY();
                     vector.add(x1Temp);
                     vector.add(y1Temp);
-                    out.println("눌럿다");
                 }
 
             });
@@ -188,7 +187,6 @@ public class BeforeGameStart extends JFrame {
                 public void mouseReleased(MouseEvent e) {
                     x1Temp = e.getX();
                     y1Temp = e.getY();
-                    out.println("야");
                 }
 
             });
@@ -205,8 +203,6 @@ public class BeforeGameStart extends JFrame {
                     y1Temp = e.getY();
                     vector.add(e.getX());
                     vector.add(e.getY());
-                    out.println("드래그르륵");
-
                 }
             });
         }
