@@ -67,20 +67,63 @@ public class ConnectionMgr {
 				"team_id INT" +
 				");");
 
-		// 테이블에 샘플 데이터 추가
-//		stmt.executeUpdate("INSERT INTO person (name, team_id, captain, category) VALUES ('noh', 1, 1, '동물')");
+		stmt.executeUpdate("DROP TABLE IF EXISTS topic");
+		// 테이블 생성
+		stmt.executeUpdate("CREATE TABLE topic (" +
+				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+				"name VARCHAR(20)" +
+				");");
 
-		// 쿼리의 결과 값(Select된 값)을 rs에 저장
-//		rs = stmt.executeQuery("SELECT * FROM person");
-//
-//		while ( rs.next()) {
-//			System.out.print(rs.getString("id")+" ");
-//			System.out.print(rs.getString("name")+" ");
-//			System.out.print(rs.getString("team_id")+" ");
-//			System.out.print(rs.getString("captain")+" ");
-//			System.out.print(rs.getString("category")+" ");
-//		}
-
+		stmt.executeUpdate("INSERT INTO topic (name)" +
+				"VALUES" +
+				"('퇴학')," +
+				"('우거지')," +
+				"('피고인')," +
+				"('핵가족')," +
+				"('연장전')," +
+				"('포크레인')," +
+				"('삼국시대')," +
+				"('풍년')," +
+				"('새우젓')," +
+				"('열매')," +
+				"('소방관')," +
+				"('전사자')," +
+				"('태양')," +
+				"('카레이서')," +
+				"('개인기')," +
+				"('가로수')," +
+				"('사시나무')," +
+				"('쥐불놀이')," +
+				"('가격표')," +
+				"('공중전화')," +
+				"('불똥')," +
+				"('양반')," +
+				"('양팔')," +
+				"('잠수')," +
+				"('철종경기')," +
+				"('코너킥')," +
+				"('티눈')," +
+				"('귓속말')," +
+				"('백수')," +
+				"('원빈')," +
+				"('줄다리기')," +
+				"('토양')," +
+				"('초음파검사')," +
+				"('창조물')," +
+				"('창업자')," +
+				"('중고생')," +
+				"('손맛')," +
+				"('무야호')," +
+				"('너T야?')," +
+				"('홍박사님을아세요?')," +
+				"('오타쿠')," +
+				"('급똥')," +
+				"('틱톡')," +
+				"('중2병')," +
+				"('수면')," +
+				"('악취')," +
+				"('동공지진')," +
+				"('사악');");
 
 		// 사용 후 close
 		stmt.close();
