@@ -113,7 +113,16 @@ public class BeforeGameStart extends JFrame {
         readyBtn.setForeground(new Color(142, 110, 0));
         readyBtn.setFont(semiMidFont);
         backgroundPanel.add(readyBtn);
+
         JButton exitBtn = new JButton("나가기");
+        exitBtn.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(null, "정말 게임을 종료하시겠습니까?");
+            if (result == JOptionPane.YES_OPTION) {
+                this.setVisible(false);
+                new Main();
+            }
+        });
+
         exitBtn.setBounds(616, 411, 90, 30);
         exitBtn.setBackground(new Color(255, 228, 131));
         exitBtn.setForeground(new Color(142, 110, 0));
@@ -128,7 +137,7 @@ public class BeforeGameStart extends JFrame {
         chatArea.setEditable(false);
         // 자동 줄바꿈
         chatArea.setLineWrap(true);
-        JScrollPane scrollPane = new JScrollPane(chatArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(chatArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         chattingPn.add(scrollPane, BorderLayout.CENTER);
 
         messageField = new JTextField();
@@ -138,15 +147,8 @@ public class BeforeGameStart extends JFrame {
             sendMessage();
         });
 
-        // 최근 내용에 포커싱
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if(e.getAdjustable().getMaximum() != prevMax) {
-                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
-                }
-            }
-        });
+        // 최근 채팅에 포커싱
+        focusRecentChat(scrollPane);
 
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
@@ -245,6 +247,17 @@ public class BeforeGameStart extends JFrame {
             });
         }
 
+    }
+
+    public void focusRecentChat(JScrollPane scrollPane) {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (e.getAdjustable().getMaximum() != prevMax) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
