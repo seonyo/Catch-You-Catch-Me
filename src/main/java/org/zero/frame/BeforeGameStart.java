@@ -99,6 +99,7 @@ public class BeforeGameStart extends JFrame {
                 pancelP.add(label);
             }
 
+            //준비 버튼
             JButton readyBtn = new JButton("준비");
             readyBtn.setBounds(616, 368, 90, 30);
             readyBtn.setBackground(new Color(255, 228, 131));
@@ -106,6 +107,7 @@ public class BeforeGameStart extends JFrame {
             readyBtn.setFont(semiMidFont);
             backgroundPanel.add(readyBtn);
 
+            //나가기 버튼
             JButton exitBtn = new JButton("나가기");
             exitBtn.setBounds(616, 411, 90, 30);
             exitBtn.setBackground(new Color(255, 228, 131));
