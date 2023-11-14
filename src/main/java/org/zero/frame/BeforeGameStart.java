@@ -122,9 +122,10 @@ public class BeforeGameStart extends JFrame {
 
         JPanel chattingPn = new JPanel(new BorderLayout());
         chattingPn.setBounds(525, 140, 180, 210);
-
-//            chatArea = new JTextArea();
+        
+        // 채팅 기록
         chatArea.setEditable(false);
+        // 자동 줄바꿈
         chatArea.setLineWrap(true);
         chattingPn.add(new JScrollPane(chatArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 
