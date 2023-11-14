@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.Vector;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static org.zero.common.CommonUtil.*;
 
 
@@ -42,7 +43,8 @@ public class BeforeGameStart extends JFrame {
     private static String userName;
     public static Connection conn = null;
     public static Statement stmt = null;
-    private int userId;
+    private static int userCnt = 0;
+    private int prevMax = 0; // 이전 최대 값
 
     public BeforeGameStart(String userName) {
 
@@ -122,15 +124,28 @@ public class BeforeGameStart extends JFrame {
         JPanel chattingPn = new JPanel(new BorderLayout());
         chattingPn.setBounds(525, 140, 180, 210);
 
-//            chatArea = new JTextArea();
+        // 채팅 기록
         chatArea.setEditable(false);
-        chattingPn.add(new JScrollPane(chatArea), BorderLayout.CENTER);
+        // 자동 줄바꿈
+        chatArea.setLineWrap(true);
+        JScrollPane scrollPane = new JScrollPane(chatArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        chattingPn.add(scrollPane, BorderLayout.CENTER);
 
         messageField = new JTextField();
         chattingPn.add(messageField, BorderLayout.SOUTH);
 
         messageField.addActionListener(e -> {
             sendMessage();
+        });
+
+        // 최근 내용에 포커싱
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if(e.getAdjustable().getMaximum() != prevMax) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
+                }
+            }
         });
 
         backgroundPanel.add(chattingPn);
@@ -230,5 +245,9 @@ public class BeforeGameStart extends JFrame {
             });
         }
 
+    }
+
+    public static void main(String[] args) {
+        new BeforeGameStart("흥");
     }
 }
