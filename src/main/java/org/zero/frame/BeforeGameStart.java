@@ -138,15 +138,8 @@ public class BeforeGameStart extends JFrame {
             sendMessage();
         });
 
-        // 최근 내용에 포커싱
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if(e.getAdjustable().getMaximum() != prevMax) {
-                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
-                }
-            }
-        });
+        // 최근 채팅에 포커싱
+        focusRecentChat(scrollPane);
 
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
@@ -245,6 +238,17 @@ public class BeforeGameStart extends JFrame {
             });
         }
 
+    }
+
+    public void focusRecentChat(JScrollPane scrollPane) {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if(e.getAdjustable().getMaximum() != prevMax) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
