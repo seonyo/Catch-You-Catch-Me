@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.Vector;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static org.zero.common.CommonUtil.*;
 
 
@@ -42,7 +43,7 @@ public class BeforeGameStart extends JFrame {
     private static String userName;
     public static Connection conn = null;
     public static Statement stmt = null;
-    private int userId;
+    private static int userCnt = 0;
 
     public BeforeGameStart(String userName) {
 
@@ -124,7 +125,8 @@ public class BeforeGameStart extends JFrame {
 
 //            chatArea = new JTextArea();
         chatArea.setEditable(false);
-        chattingPn.add(new JScrollPane(chatArea), BorderLayout.CENTER);
+        chatArea.setLineWrap(true);
+        chattingPn.add(new JScrollPane(chatArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 
         messageField = new JTextField();
         chattingPn.add(messageField, BorderLayout.SOUTH);
