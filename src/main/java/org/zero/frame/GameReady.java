@@ -1,19 +1,12 @@
 package org.zero.frame;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.*;
 
 import org.zero.common.CommonUtil;
-import org.zero.db.ConnectionMgr;
 import org.zero.db.DB;
 
 import static java.util.Arrays.asList;
@@ -25,11 +18,12 @@ public class GameReady extends JFrame{
 	private JPanel backgroundPanel;
 	private Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
 	private String content="";
-	private String name="";
+	private String name="";// 입력받는 이름
 	private int categoryIndex;
 	public static Connection conn = null;
 	public static Statement stmt = null;
-	private int user_id;// primary key
+	private int userId;// primary key
+	private String userName;
 	public GameReady() {
 		// 시작기본세팅 메서드
 		settings(this);
@@ -73,9 +67,24 @@ public class GameReady extends JFrame{
 				idBtn.setBackground(new Color(198,198,198));
 				idTf.setEnabled(false);
 				saveUserName(name);// 사용자 이름 db에 저장
+				this.userName = name;
 			}
 		});
 
+<<<<<<< HEAD
+=======
+		gamestartBtn.addActionListener(event -> {
+			if (content.equals("")) {
+				JOptionPane.showMessageDialog(null, "주제를 선택하세요.");
+			} else if (name.equals("")) {
+				JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
+			} else {
+				dispose();
+				saveGameCategory(categoryIndex);// 카테고리 db에 저장
+				new BeforeGameStart(this.userName);
+			}
+		});
+>>>>>>> 03e9cd5e232e1ba097cb6ddee7a52432f75f21f1
 		setVisible(true);
 
 
@@ -97,7 +106,7 @@ public class GameReady extends JFrame{
 		}
 	}
 
-	private void saveUserName(String userId) {
+	private void saveUserName(String name) {
 		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
 		try {
 			conn = getConnection(DB.MySQL.JDBC_URL);
@@ -109,11 +118,11 @@ public class GameReady extends JFrame{
 			ResultSet rs;
 			rs = stmt.executeQuery("SELECT * FROM user");
 			while ( rs.next()) {
-				this.user_id = Integer.parseInt(rs.getString("id"));
+				this.userName = rs.getString("name");
 			}
 
-			System.out.println(this.user_id);
-
+			System.out.println(this.userName);
+			//findUserName(this.userId);
 			// 사용 후 close
 			rs.close();
 		} catch (SQLException e) {
@@ -134,7 +143,7 @@ public class GameReady extends JFrame{
 
 		// 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
 		try {
-			String query = "UPDATE user SET category = '"+category+"' WHERE id = "+this.user_id;
+			String query = "UPDATE user SET category = '"+category+"' WHERE id = "+this.userId;
 			ResultSet rs;
 			stmt.executeUpdate(query);
 			rs = stmt.executeQuery("SELECT * FROM user");
@@ -170,8 +179,10 @@ public class GameReady extends JFrame{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		new GameReady();
 	}
+
+
 }
