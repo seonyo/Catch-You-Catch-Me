@@ -1,24 +1,19 @@
 package org.zero.frame;
 
 import org.zero.common.CommonUtil;
-import org.zero.db.DB;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 import java.util.Vector;
 
 import static org.zero.common.CommonUtil.*;
-import static org.zero.db.ConnectionMgr.getConnection;
 
 
 public class BeforeGameStart extends JFrame {
@@ -41,136 +36,152 @@ public class BeforeGameStart extends JFrame {
     private Vector<Integer> vector = new Vector<Integer>();
     private int x1Temp, y1Temp;
     Image drawIcon[] = {red, orange, yellow, green, blue, purple, pink, black, erase, trash};
-    private PrintWriter out;
-    private JTextArea textArea;
-    private JTextField textField;
+    private static JTextArea chatArea = new JTextArea();
+    private static JTextField messageField;
+    private static PrintWriter writer;
+    private static String userName;
     public static Connection conn = null;
     public static Statement stmt = null;
     private int userId;
-    private String userName;
 
     public BeforeGameStart(String userName) {
-        SwingUtilities.invokeLater(() -> {
-            CommonUtil.settings(this);
-            this.userName = userName;
-            backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
-            JPanel pancelP = new JPanel();
-            pancelP.setBounds(40, 360, 470, 107);
-            pancelP.setBackground(new Color(255, 255, 255));
-            backgroundPanel.add(pancelP);
+        CommonUtil.settings(this);
+        this.userName = userName;
+        backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
-            DrawingPanel drawingPanel = new DrawingPanel();
-            this.add(drawingPanel);
-            drawingPanel.setBackground(new Color(255, 255, 255));
-            drawingPanel.setBounds(40, 90, 470, 265);
+        JPanel pancelP = new JPanel();
+        pancelP.setBounds(40, 360, 470, 107);
+        pancelP.setBackground(new Color(255, 255, 255));
+        backgroundPanel.add(pancelP);
 
-            for (int i = 0; i < drawIcon.length; i++) {
-                int index = i;
-                JLabel label = new JLabel(new ImageIcon(drawIcon[i]));
-                label.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        out.println("이미지 " + index + "가 클릭되었습니다.");
-                        switch (index) {
-                            case 0:
-                                currentColor = new Color(255, 12, 12);
-                                break;
-                            case 1:
-                                currentColor = new Color(248, 89, 0);
-                                break;
-                            case 2:
-                                currentColor = new Color(255, 213, 64);
-                                break;
-                            case 3:
-                                currentColor = new Color(23, 189, 9);
-                                break;
-                            case 4:
-                                currentColor = new Color(58, 41, 255);
-                                break;
-                            case 5:
-                                currentColor = new Color(162, 10, 255);
-                                break;
-                            case 6:
-                                currentColor = new Color(255, 60, 212);
-                                break;
-                            case 7:
-                                currentColor = new Color(0, 0, 0);
-                                break;
-                            case 8:
-                                currentColor = new Color(255, 255, 255);
-                                break;
-                            case 9:
-                                drawingPanel.clearDrawing();
-                                vector.clear();
-                                break;
-                        }
+        DrawingPanel drawingPanel = new DrawingPanel();
+        this.add(drawingPanel);
+        drawingPanel.setBackground(new Color(255, 255, 255));
+        drawingPanel.setBounds(40, 90, 470, 265);
+
+        for (int i = 0; i < drawIcon.length; i++) {
+            int index = i;
+            JLabel label = new JLabel(new ImageIcon(drawIcon[i]));
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    writer.println("이미지 " + index + "가 클릭되었습니다.");
+                    switch (index) {
+                        case 0:
+                            currentColor = new Color(255, 12, 12);
+                            break;
+                        case 1:
+                            currentColor = new Color(248, 89, 0);
+                            break;
+                        case 2:
+                            currentColor = new Color(255, 213, 64);
+                            break;
+                        case 3:
+                            currentColor = new Color(23, 189, 9);
+                            break;
+                        case 4:
+                            currentColor = new Color(58, 41, 255);
+                            break;
+                        case 5:
+                            currentColor = new Color(162, 10, 255);
+                            break;
+                        case 6:
+                            currentColor = new Color(255, 60, 212);
+                            break;
+                        case 7:
+                            currentColor = new Color(0, 0, 0);
+                            break;
+                        case 8:
+                            currentColor = new Color(255, 255, 255);
+                            break;
+                        case 9:
+                            drawingPanel.clearDrawing();
+                            vector.clear();
+                            break;
                     }
-                });
-                pancelP.add(label);
-            }
-
-            JButton readyBtn = new JButton("준비");
-            readyBtn.setBounds(616, 368, 90, 30);
-            readyBtn.setBackground(new Color(255, 228, 131));
-            readyBtn.setForeground(new Color(142, 110, 0));
-            readyBtn.setFont(semiMidFont);
-            backgroundPanel.add(readyBtn);
-            JButton exitBtn = new JButton("나가기");
-            exitBtn.setBounds(616, 411, 90, 30);
-            exitBtn.setBackground(new Color(255, 228, 131));
-            exitBtn.setForeground(new Color(142, 110, 0));
-            exitBtn.setFont(semiMidFont);
-            backgroundPanel.add(exitBtn);
-            add(backgroundPanel);
-
-            JPanel chattingPn = new JPanel(new BorderLayout());
-            chattingPn.setBounds(525, 140, 180, 210);
-
-            textArea = new JTextArea();
-            textArea.setEditable(false);
-            chattingPn.add(new JScrollPane(textArea), BorderLayout.CENTER);
-
-            textField = new JTextField();
-            chattingPn.add(textField, BorderLayout.SOUTH);
-
-            textField.addActionListener(e -> {
-                sendMessage(textField.getText());
-                textField.setText("");
+                }
             });
+            pancelP.add(label);
+        }
 
-            backgroundPanel.add(chattingPn);
-            this.setVisible(true);
+        JButton readyBtn = new JButton("준비");
+        readyBtn.setBounds(616, 368, 90, 30);
+        readyBtn.setBackground(new Color(255, 228, 131));
+        readyBtn.setForeground(new Color(142, 110, 0));
+        readyBtn.setFont(semiMidFont);
+        backgroundPanel.add(readyBtn);
+        JButton exitBtn = new JButton("나가기");
+        exitBtn.setBounds(616, 411, 90, 30);
+        exitBtn.setBackground(new Color(255, 228, 131));
+        exitBtn.setForeground(new Color(142, 110, 0));
+        exitBtn.setFont(semiMidFont);
+        backgroundPanel.add(exitBtn);
+        add(backgroundPanel);
+
+        JPanel chattingPn = new JPanel(new BorderLayout());
+        chattingPn.setBounds(525, 140, 180, 210);
+
+//            chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        chattingPn.add(new JScrollPane(chatArea), BorderLayout.CENTER);
+
+        messageField = new JTextField();
+        chattingPn.add(messageField, BorderLayout.SOUTH);
+
+        messageField.addActionListener(e -> {
+            sendMessage();
         });
+
+        backgroundPanel.add(chattingPn);
+        this.setVisible(true);
+
         connectToServer();
     }
 
-    private void sendMessage(String message) {
-        out.println(message);
+    private static void connectToServer() {
+        try {
+            Socket socket = new Socket("localhost", 8090);
+            writer = new PrintWriter(socket.getOutputStream());
+            writer.println(userName);
+            writer.flush();
+
+            Thread readerThread = new Thread(new IncomingReader(socket));
+            readerThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void appendToTextArea(String message) {
+    private static void sendMessage() {
         SwingUtilities.invokeLater(() -> {
-            textArea.append(this.userName+": "+message + "\n");
-            textArea.setCaretPosition(textArea.getDocument().getLength());
+            String message = messageField.getText();
+            writer.println(message);
+            writer.flush();
+            messageField.setText("");
         });
     }
 
-    private void connectToServer() {
-        new Thread(() -> {
-            try {
-                Socket socket = new Socket("localhost", 8090); // 서버 주소와 포트를 설정하세요
-                out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    static class IncomingReader implements Runnable {
+        private Socket socket;
+        private Scanner scanner;
 
-                while (true) {
-                    String message = in.readLine();
-                    appendToTextArea(message);
+        public IncomingReader(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                scanner = new Scanner(socket.getInputStream());
+                while (scanner.hasNextLine()) {
+                    String message = scanner.nextLine();
+                    chatArea.append(message + "\n");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        }
     }
 
     class DrawingPanel extends JPanel {
@@ -221,9 +232,4 @@ public class BeforeGameStart extends JFrame {
         }
 
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new BeforeGameStart("길동"));
-    }
-
 }
