@@ -43,8 +43,9 @@ public class BeforeGameStart extends JFrame {
     private static String userName;
     public static Connection conn = null;
     public static Statement stmt = null;
-    private static int userCnt = 0;
     private int prevMax = 0; // 이전 최대 값
+    public static int userCnt = 0;// 현재 유저 수
+    public static int userReadyNowCnt = 0;// 현재 준비완료된 유저 수
 
     public BeforeGameStart(String userName) {
 
@@ -68,7 +69,6 @@ public class BeforeGameStart extends JFrame {
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    writer.println("이미지 " + index + "가 클릭되었습니다.");
                     switch (index) {
                         case 0:
                             currentColor = new Color(255, 12, 12);
@@ -102,55 +102,35 @@ public class BeforeGameStart extends JFrame {
                             vector.clear();
                             break;
                     }
-<<<<<<< HEAD
-                });
-                pancelP.add(label);
-            }
-
-            //준비 버튼
-            JButton readyBtn = new JButton("준비");
-            readyBtn.setBounds(616, 368, 90, 30);
-            readyBtn.setBackground(new Color(255, 228, 131));
-            readyBtn.setForeground(new Color(142, 110, 0));
-            readyBtn.setFont(semiMidFont);
-            backgroundPanel.add(readyBtn);
-
-            //나가기 버튼
-            JButton exitBtn = new JButton("나가기");
-            exitBtn.setBounds(616, 411, 90, 30);
-            exitBtn.setBackground(new Color(255, 228, 131));
-            exitBtn.setForeground(new Color(142, 110, 0));
-            exitBtn.setFont(semiMidFont);
-            backgroundPanel.add(exitBtn);
-            add(backgroundPanel);
-
-            JPanel chattingPn = new JPanel(new BorderLayout());
-            chattingPn.setBounds(525, 140, 180, 210);
-
-            textArea = new JTextArea();
-            textArea.setEditable(false);
-            chattingPn.add(new JScrollPane(textArea), BorderLayout.CENTER);
-
-            textField = new JTextField();
-            chattingPn.add(textField, BorderLayout.SOUTH);
-
-            textField.addActionListener(e -> {
-                sendMessage(textField.getText());
-                textField.setText("");
-=======
                 }
->>>>>>> 03e9cd5e232e1ba097cb6ddee7a52432f75f21f1
             });
             pancelP.add(label);
         }
 
         JButton readyBtn = new JButton("준비");
+        readyBtn.addActionListener(e -> {
+            userReadyNowCnt++;
+            writer.println("준비완료: " + userReadyNowCnt);
+            if (userCnt == userReadyNowCnt) {
+                this.setVisible(false);
+                new GameEnd();
+            }
+        });
         readyBtn.setBounds(616, 368, 90, 30);
         readyBtn.setBackground(new Color(255, 228, 131));
         readyBtn.setForeground(new Color(142, 110, 0));
         readyBtn.setFont(semiMidFont);
         backgroundPanel.add(readyBtn);
+
         JButton exitBtn = new JButton("나가기");
+        exitBtn.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(null, "정말 게임을 종료하시겠습니까?");
+            if (result == JOptionPane.YES_OPTION) {
+                this.setVisible(false);
+                new Main();
+            }
+        });
+
         exitBtn.setBounds(616, 411, 90, 30);
         exitBtn.setBackground(new Color(255, 228, 131));
         exitBtn.setForeground(new Color(142, 110, 0));
@@ -165,7 +145,7 @@ public class BeforeGameStart extends JFrame {
         chatArea.setEditable(false);
         // 자동 줄바꿈
         chatArea.setLineWrap(true);
-        JScrollPane scrollPane = new JScrollPane(chatArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(chatArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         chattingPn.add(scrollPane, BorderLayout.CENTER);
 
         messageField = new JTextField();
@@ -175,15 +155,8 @@ public class BeforeGameStart extends JFrame {
             sendMessage();
         });
 
-        // 최근 내용에 포커싱
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if(e.getAdjustable().getMaximum() != prevMax) {
-                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
-                }
-            }
-        });
+        // 최근 채팅에 포커싱
+        focusRecentChat(scrollPane);
 
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
@@ -197,6 +170,8 @@ public class BeforeGameStart extends JFrame {
             writer = new PrintWriter(socket.getOutputStream());
             writer.println(userName);
             writer.flush();
+            userCnt++;
+            System.out.println("유저수: " + userCnt);
 
             Thread readerThread = new Thread(new IncomingReader(socket));
             readerThread.start();
@@ -206,12 +181,15 @@ public class BeforeGameStart extends JFrame {
     }
 
     private static void sendMessage() {
-        SwingUtilities.invokeLater(() -> {
-            String message = messageField.getText();
-            writer.println(message);
-            writer.flush();
-            messageField.setText("");
-        });
+
+        String message = messageField.getText();
+        writer.println(message);
+        if (message.contains("내가만든쿠키")) {
+            writer.println("[ 정답자 ]");
+        }
+        writer.flush();
+        messageField.setText("");
+
     }
 
     static class IncomingReader implements Runnable {
@@ -282,6 +260,17 @@ public class BeforeGameStart extends JFrame {
             });
         }
 
+    }
+
+    public void focusRecentChat(JScrollPane scrollPane) {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (e.getAdjustable().getMaximum() != prevMax) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
