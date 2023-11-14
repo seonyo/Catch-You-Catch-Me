@@ -8,6 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,10 +17,18 @@ public class ChatServer {
     private static final int PORT = 8090;
     private static Set<PrintWriter> clientWriters = new HashSet<>();
     private static ExecutorService clientHandlerThreadPool = Executors.newCachedThreadPool();
-
+    private static boolean isOn = false;
     public static void main(String[] args) {
         System.out.println("채팅 서버 시작...");
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    new BeforeGameStart();
+                }
+            };
+            timer.schedule(timerTask, 1000);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
@@ -34,6 +44,7 @@ public class ChatServer {
         private PrintWriter out;
 
         public ClientHandler(Socket socket) {
+
             this.socket = socket;
         }
 

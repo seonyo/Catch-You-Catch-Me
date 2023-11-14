@@ -2,6 +2,10 @@ package org.zero.frame;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,15 +115,12 @@ public class GameReady extends JFrame{
 			}
 		});
 
-
-		gamestartBtn.addActionListener(event ->{
-			if(content.equals("")){
+		gamestartBtn.addActionListener(event -> {
+			if (content.equals("")) {
 				JOptionPane.showMessageDialog(null, "주제를 선택하세요.");
-			}
-			else if(name.equals("")){
+			} else if (name.equals("")) {
 				JOptionPane.showMessageDialog(null, "아이디를 입력하세요.");
-			}
-			else{
+			} else {
 				dispose();
 				saveGameCategory(categoryIndex);// 카테고리 db에 저장
 				new BeforeGameStart();
