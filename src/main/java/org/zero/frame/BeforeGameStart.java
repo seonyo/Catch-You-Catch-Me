@@ -218,7 +218,6 @@ public class BeforeGameStart extends JFrame {
             conn = getConnection(DB.MySQL.JDBC_URL);
             stmt = conn.createStatement();
 
-            // 현재 주제 정하기
             String sql = "DELETE FROM current_topic";
             ps = conn.prepareStatement(sql);
 
