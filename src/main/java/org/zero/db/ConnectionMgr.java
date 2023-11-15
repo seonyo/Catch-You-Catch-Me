@@ -125,6 +125,13 @@ public class ConnectionMgr {
 				"('동공지진')," +
 				"('사악');");
 
+		stmt.executeUpdate("DROP TABLE IF EXISTS current_topic");
+		// 테이블 생성
+		stmt.executeUpdate("CREATE TABLE current_topic (" +
+				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+				"name VARCHAR(20)" +
+				");");
+
 		// 사용 후 close
 		stmt.close();
 //		rs.close();

@@ -9,15 +9,12 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Scanner;
 import java.util.Vector;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static org.zero.common.CommonUtil.*;
+import static org.zero.db.ConnectionMgr.closeConnection;
 import static org.zero.db.ConnectionMgr.getConnection;
 
 
@@ -47,6 +44,7 @@ public class BeforeGameStart extends JFrame {
     private static String userName;
     private static Connection conn = null;
     private static Statement stmt = null;
+    private static PreparedStatement ps = null;
     private static ResultSet rs = null;
     private int prevMax = 0; // 이전 최대 값
     private String currentTopic;// 현재 주제
@@ -56,6 +54,7 @@ public class BeforeGameStart extends JFrame {
     public BeforeGameStart(String userName) {
 
         CommonUtil.settings(this);
+        dropCurrentTopic();
         this.userName = userName;
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
@@ -166,7 +165,9 @@ public class BeforeGameStart extends JFrame {
 
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
-        findTopic();
+
+        this.currentTopic = findCurrentTopic(this.currentTopic);
+        saveCurrentTopic(this.currentTopic);
         connectToServer();
     }
 
@@ -186,12 +187,14 @@ public class BeforeGameStart extends JFrame {
         }
     }
 
-    private static void sendMessage() {
-        String correct = "구토";
+    private void sendMessage() {
         String message = messageField.getText();
+//        String currentTopic = findCurrentTopic(this.currentTopic);
         writer.println(message);
-        if (message.replaceAll(" ", "").contains(correct)) {
-            writer.println("[ 정답: " + correct + " ]");
+        if (message.replaceAll(" ", "").contains(currentTopic)) {
+            writer.println("[ 정답: " + currentTopic + " ]");
+            this.currentTopic = findCurrentTopic(this.currentTopic);
+            saveCurrentTopic(this.currentTopic);
         }
         writer.flush();
         messageField.setText("");
@@ -209,9 +212,24 @@ public class BeforeGameStart extends JFrame {
         });
     }
 
-    // 주제 가져오기
-    private void findTopic() {
-        // 데이터베이스 연결을 설정하고 사용자 ID를 삽입합니다.
+    // 주제
+    private void dropCurrentTopic() {
+        try {
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            stmt = conn.createStatement();
+
+            // 현재 주제 정하기
+            String sql = "DELETE FROM current_topic";
+            ps = conn.prepareStatement(sql);
+
+            int deleteCount = ps.executeUpdate();
+            System.out.println(deleteCount+" 삭제됨");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("현재 주제 초기화 실패");
+        }
+    }
+    private static String findCurrentTopic(String currentTopic) {
         try {
             conn = getConnection(DB.MySQL.JDBC_URL);
             stmt = conn.createStatement();
@@ -232,13 +250,31 @@ public class BeforeGameStart extends JFrame {
             // 랜덤 주제 가져오기
             rs = stmt.executeQuery("SELECT * FROM topic WHERE id = " + randomValue);
             while (rs.next())
-                this.currentTopic = rs.getString("name");
-            System.out.println(this.currentTopic);
+                currentTopic = rs.getString("name");
+            System.out.println(currentTopic);
 
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("주제 불러오기 실패");
+        }
+
+        return currentTopic;
+    }
+
+    private static void saveCurrentTopic(String currentTopic) {
+        try {
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            stmt = conn.createStatement();
+
+            String query = "INSERT INTO current_topic (name) VALUES ('"+currentTopic+"')";
+            stmt.executeUpdate(query);
+
+            // 사용 후 close
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("현재 주제 db에 저장 실패");
         }
     }
 
