@@ -59,6 +59,7 @@ public class GamePlay extends JFrame {
     public GamePlay() {
 
         CommonUtil.settings(this);
+        dropCurrentTopic();// 현재 주제 초기화
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         JPanel pancelP = new JPanel();
@@ -115,17 +116,6 @@ public class GamePlay extends JFrame {
             pancelP.add(label);
         }
 
-        // 버튼 추가 코드
-        JButton changeBtn = new JButton("문제 바꾸기");
-        changeBtn.addActionListener(e -> {
-            // 문제 바꾸는 코드
-        });
-        changeBtn.setBounds(616, 368, 90, 30);
-        changeBtn.setBackground(new Color(255, 228, 131));
-        changeBtn.setForeground(new Color(142, 110, 0));
-        changeBtn.setFont(smallFont);
-        backgroundPanel.add(changeBtn);
-
         JButton exitBtn = new JButton("나가기");
         exitBtn.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(null, "정말 게임을 종료하시겠습니까?");
@@ -150,10 +140,24 @@ public class GamePlay extends JFrame {
 
         this.currentTopic = findCurrentTopic(this.currentTopic);
         categoryContentJL = new JLabel(this.currentTopic);
+        saveCurrentTopic(this.currentTopic);
+        categoryContentJL.setHorizontalAlignment(JLabel.CENTER);
         categoryContentJL.setForeground(new Color(0,0,0));
-        categoryContentJL.setBounds(516,392,200,50);
+        categoryContentJL.setBounds(513,392,100,50);
         categoryContentJL.setFont(semiMidFont);
         backgroundPanel.add(categoryContentJL);
+
+        // 문제 바꾸는 코드
+        JButton changeBtn = new JButton("문제변경");
+        changeBtn.addActionListener(e -> {
+            this.currentTopic = findCurrentTopic(this.currentTopic);
+            categoryContentJL.setText(this.currentTopic);
+        });
+        changeBtn.setBounds(616, 368, 90, 30);
+        changeBtn.setBackground(new Color(255, 228, 131));
+        changeBtn.setForeground(new Color(142, 110, 0));
+        changeBtn.setFont(smallFont);
+        backgroundPanel.add(changeBtn);
 
         int nameX = 522;
         int nameY = 68;
@@ -214,38 +218,15 @@ public class GamePlay extends JFrame {
         }
     }
 
-    private static void sendMessage() {
-
+    private void sendMessage() {
         String message = messageField.getText();
         writer.println(message);
-        if (message.contains("내가만든쿠키")) {
-            writer.println("[ 정답자 ]");
+        if (message.replaceAll(" ", "").contains(currentTopic)) {
+            changeCurrentTopic();// 현재 주제 변경
         }
         writer.flush();
         messageField.setText("");
 
-    }
-
-    static class IncomingReader implements Runnable {
-        private Socket socket;
-        private Scanner scanner;
-
-        public IncomingReader(Socket socket) {
-            this.socket = socket;
-        }
-
-        @Override
-        public void run() {
-            try {
-                scanner = new Scanner(socket.getInputStream());
-                while (scanner.hasNextLine()) {
-                    String message = scanner.nextLine();
-                    chatArea.append(message + "\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void focusRecentChat(JScrollPane scrollPane) {
@@ -321,6 +302,35 @@ public class GamePlay extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("현재 주제 db에 저장 실패");
+        }
+    }
+
+    private void changeCurrentTopic() {
+        writer.println("[ 정답: " + currentTopic + " ]");
+        this.currentTopic = findCurrentTopic(this.currentTopic);
+        categoryContentJL.setText(this.currentTopic);
+        saveCurrentTopic(this.currentTopic);
+    }
+
+    static class IncomingReader implements Runnable {
+        private Socket socket;
+        private Scanner scanner;
+
+        public IncomingReader(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                scanner = new Scanner(socket.getInputStream());
+                while (scanner.hasNextLine()) {
+                    String message = scanner.nextLine();
+                    chatArea.append(message + "\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
