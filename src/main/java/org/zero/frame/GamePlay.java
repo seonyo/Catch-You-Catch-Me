@@ -59,9 +59,10 @@ public class GamePlay extends JFrame {
     private int mm, ss, ms, t = 0;
     private String currentTime;// 현재 시간
 
-    public GamePlay() {
+    public GamePlay(String userName) {
 
         CommonUtil.settings(this);
+        this.userName = userName;
         dropCurrentTopic();// 현재 주제 초기화
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
         setTimer(this.backgroundPanel);// timer
@@ -452,6 +453,6 @@ public class GamePlay extends JFrame {
 
 
     public static void main(String[] args) {
-        new GamePlay();
+        new GamePlay(userName);
     }
 }
