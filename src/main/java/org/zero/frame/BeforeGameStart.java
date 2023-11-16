@@ -118,7 +118,7 @@ public class BeforeGameStart extends JFrame {
             writer.println("준비완료: " + userReadyNowCnt);
             if (userCnt == userReadyNowCnt) {
                 this.setVisible(false);
-                new GameEnd();
+                new GamePlay();
             }
         });
         readyBtn.setBounds(616, 368, 90, 30);
