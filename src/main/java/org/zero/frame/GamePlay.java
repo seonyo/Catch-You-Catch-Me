@@ -1,6 +1,7 @@
 package org.zero.frame;
 
 import org.zero.common.CommonUtil;
+import org.zero.db.DB;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,8 +9,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static org.zero.common.CommonUtil.*;
+import static org.zero.db.ConnectionMgr.getConnection;
 
 
 public class GamePlay extends JFrame {
@@ -45,16 +46,20 @@ public class GamePlay extends JFrame {
     private static String userName;
     public static Connection conn = null;
     public static Statement stmt = null;
+    private static PreparedStatement ps = null;
+    private static ResultSet rs = null;
+    private JLabel categoryContentJL = null;// 현재 제시어
+    private String currentTopic;// 현재 주제
     private int prevMax = 0; // 이전 최대 값
     public static int userCnt = 0;// 현재 유저 수
     //유저 이름 (임의의 값으로 초기화)
     ArrayList<String> nameArr = new ArrayList<>(
             Arrays.asList("노하은", "정선영", "이지수", "박화경")
     );
-    public GamePlay(String userName) {
+    public GamePlay() {
 
         CommonUtil.settings(this);
-        this.userName = userName;
+        dropCurrentTopic();// 현재 주제 초기화
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         JPanel pancelP = new JPanel();
@@ -111,17 +116,6 @@ public class GamePlay extends JFrame {
             pancelP.add(label);
         }
 
-        // 버튼 추가 코드
-        JButton changeBtn = new JButton("문제 바꾸기");
-        changeBtn.addActionListener(e -> {
-            // 문제 바꾸는 코드
-        });
-        changeBtn.setBounds(616, 368, 90, 30);
-        changeBtn.setBackground(new Color(255, 228, 131));
-        changeBtn.setForeground(new Color(142, 110, 0));
-        changeBtn.setFont(smallFont);
-        backgroundPanel.add(changeBtn);
-
         JButton exitBtn = new JButton("나가기");
         exitBtn.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(null, "정말 게임을 종료하시겠습니까?");
@@ -144,12 +138,26 @@ public class GamePlay extends JFrame {
         categoryJL.setFont(semiMidFont);
         backgroundPanel.add(categoryJL);
 
-        //제시어 내용 추가 코드
-        JLabel categoryContentJL = new JLabel("내가만든쿠키");
+        this.currentTopic = findCurrentTopic(this.currentTopic);
+        categoryContentJL = new JLabel(this.currentTopic);
+        saveCurrentTopic(this.currentTopic);
+        categoryContentJL.setHorizontalAlignment(JLabel.CENTER);
         categoryContentJL.setForeground(new Color(0,0,0));
-        categoryContentJL.setBounds(516,392,200,50);
+        categoryContentJL.setBounds(513,392,100,50);
         categoryContentJL.setFont(semiMidFont);
         backgroundPanel.add(categoryContentJL);
+
+        // 문제 바꾸는 코드
+        JButton changeBtn = new JButton("문제변경");
+        changeBtn.addActionListener(e -> {
+            this.currentTopic = findCurrentTopic(this.currentTopic);
+            categoryContentJL.setText(this.currentTopic);
+        });
+        changeBtn.setBounds(616, 368, 90, 30);
+        changeBtn.setBackground(new Color(255, 228, 131));
+        changeBtn.setForeground(new Color(142, 110, 0));
+        changeBtn.setFont(smallFont);
+        backgroundPanel.add(changeBtn);
 
         int nameX = 522;
         int nameY = 68;
@@ -210,16 +218,98 @@ public class GamePlay extends JFrame {
         }
     }
 
-    private static void sendMessage() {
-
+    private void sendMessage() {
         String message = messageField.getText();
         writer.println(message);
-        if (message.contains("내가만든쿠키")) {
-            writer.println("[ 정답자 ]");
+        if (message.replaceAll(" ", "").contains(currentTopic)) {
+            changeCurrentTopic();// 현재 주제 변경
         }
         writer.flush();
         messageField.setText("");
 
+    }
+
+    private void focusRecentChat(JScrollPane scrollPane) {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (e.getAdjustable().getMaximum() != prevMax) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
+                }
+            }
+        });
+    }
+
+    // 주제
+    private void dropCurrentTopic() {
+        try {
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            stmt = conn.createStatement();
+
+            String sql = "DELETE FROM current_topic";
+            ps = conn.prepareStatement(sql);
+
+            int deleteCount = ps.executeUpdate();
+            System.out.println(deleteCount+" 삭제됨");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("현재 주제 초기화 실패");
+        }
+    }
+    private static String findCurrentTopic(String currentTopic) {
+        try {
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            stmt = conn.createStatement();
+
+            // 현재 주제 정하기
+            rs = stmt.executeQuery("SELECT COUNT(*) FROM topic");
+
+            // 현재 topic table의 사이즈 구하기
+            int rowCount = 0;
+            while (rs.next()) {
+                rowCount = Integer.parseInt(rs.getString("count(*)"));
+            }
+
+            // 난수 생성
+            double random = Math.random();
+            int randomValue = (int) (random * rowCount + 1);
+
+            // 랜덤 주제 가져오기
+            rs = stmt.executeQuery("SELECT * FROM topic WHERE id = " + randomValue);
+            while (rs.next())
+                currentTopic = rs.getString("name");
+            System.out.println(currentTopic);
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("주제 불러오기 실패");
+        }
+
+        return currentTopic;
+    }
+
+    private static void saveCurrentTopic(String currentTopic) {
+        try {
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            stmt = conn.createStatement();
+
+            String query = "INSERT INTO current_topic (name) VALUES ('"+currentTopic+"')";
+            stmt.executeUpdate(query);
+
+            // 사용 후 close
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("현재 주제 db에 저장 실패");
+        }
+    }
+
+    private void changeCurrentTopic() {
+        writer.println("[ 정답: " + currentTopic + " ]");
+        this.currentTopic = findCurrentTopic(this.currentTopic);
+        categoryContentJL.setText(this.currentTopic);
+        saveCurrentTopic(this.currentTopic);
     }
 
     static class IncomingReader implements Runnable {
@@ -291,19 +381,7 @@ public class GamePlay extends JFrame {
         }
 
     }
-
-    public void focusRecentChat(JScrollPane scrollPane) {
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (e.getAdjustable().getMaximum() != prevMax) {
-                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                    prevMax = e.getAdjustable().getMaximum(); // 이전 최대 값을 업데이트
-                }
-            }
-        });
-    }
-
     public static void main(String[] args) {
-        new GamePlay("흥");
+        new GamePlay();
     }
 }

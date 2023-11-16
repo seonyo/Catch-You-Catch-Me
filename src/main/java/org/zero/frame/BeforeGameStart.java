@@ -54,7 +54,6 @@ public class BeforeGameStart extends JFrame {
     public BeforeGameStart(String userName) {
 
         CommonUtil.settings(this);
-        dropCurrentTopic();
         this.userName = userName;
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
@@ -118,7 +117,7 @@ public class BeforeGameStart extends JFrame {
             writer.println("준비완료: " + userReadyNowCnt);
             if (userCnt == userReadyNowCnt) {
                 this.setVisible(false);
-                new GameEnd();
+                new GamePlay();
             }
         });
         readyBtn.setBounds(616, 368, 90, 30);
@@ -166,8 +165,6 @@ public class BeforeGameStart extends JFrame {
         backgroundPanel.add(chattingPn);
         this.setVisible(true);
 
-        this.currentTopic = findCurrentTopic(this.currentTopic);
-        saveCurrentTopic(this.currentTopic);
         connectToServer();
     }
 
@@ -189,13 +186,7 @@ public class BeforeGameStart extends JFrame {
 
     private void sendMessage() {
         String message = messageField.getText();
-//        String currentTopic = findCurrentTopic(this.currentTopic);
         writer.println(message);
-        if (message.replaceAll(" ", "").contains(currentTopic)) {
-            writer.println("[ 정답: " + currentTopic + " ]");
-            this.currentTopic = findCurrentTopic(this.currentTopic);
-            saveCurrentTopic(this.currentTopic);
-        }
         writer.flush();
         messageField.setText("");
 
@@ -210,71 +201,6 @@ public class BeforeGameStart extends JFrame {
                 }
             }
         });
-    }
-
-    // 주제
-    private void dropCurrentTopic() {
-        try {
-            conn = getConnection(DB.MySQL.JDBC_URL);
-            stmt = conn.createStatement();
-
-            String sql = "DELETE FROM current_topic";
-            ps = conn.prepareStatement(sql);
-
-            int deleteCount = ps.executeUpdate();
-            System.out.println(deleteCount+" 삭제됨");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("현재 주제 초기화 실패");
-        }
-    }
-    private static String findCurrentTopic(String currentTopic) {
-        try {
-            conn = getConnection(DB.MySQL.JDBC_URL);
-            stmt = conn.createStatement();
-
-            // 현재 주제 정하기
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM topic");
-
-            // 현재 topic table의 사이즈 구하기
-            int rowCount = 0;
-            while (rs.next()) {
-                rowCount = Integer.parseInt(rs.getString("count(*)"));
-            }
-
-            // 난수 생성
-            double random = Math.random();
-            int randomValue = (int) (random * rowCount + 1);
-
-            // 랜덤 주제 가져오기
-            rs = stmt.executeQuery("SELECT * FROM topic WHERE id = " + randomValue);
-            while (rs.next())
-                currentTopic = rs.getString("name");
-            System.out.println(currentTopic);
-
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("주제 불러오기 실패");
-        }
-
-        return currentTopic;
-    }
-
-    private static void saveCurrentTopic(String currentTopic) {
-        try {
-            conn = getConnection(DB.MySQL.JDBC_URL);
-            stmt = conn.createStatement();
-
-            String query = "INSERT INTO current_topic (name) VALUES ('"+currentTopic+"')";
-            stmt.executeUpdate(query);
-
-            // 사용 후 close
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("현재 주제 db에 저장 실패");
-        }
     }
 
     static class IncomingReader implements Runnable {
