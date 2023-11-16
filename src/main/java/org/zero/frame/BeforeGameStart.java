@@ -47,9 +47,9 @@ public class BeforeGameStart extends JFrame {
     private static PreparedStatement ps = null;
     private static ResultSet rs = null;
     private int prevMax = 0; // 이전 최대 값
-    private String currentTopic;// 현재 주제
     public static int userCnt = 0;// 현재 유저 수
     public static int userReadyNowCnt = 0;// 현재 준비완료된 유저 수
+    private static DrawingPanel drawingPanel;
 
     public BeforeGameStart(String userName) {
 
@@ -62,7 +62,7 @@ public class BeforeGameStart extends JFrame {
         pancelP.setBackground(new Color(255, 255, 255));
         backgroundPanel.add(pancelP);
 
-        DrawingPanel drawingPanel = new DrawingPanel();
+        drawingPanel = new DrawingPanel();
         this.add(drawingPanel);
         drawingPanel.setBackground(new Color(255, 255, 255));
         drawingPanel.setBounds(40, 90, 470, 265);
@@ -217,21 +217,44 @@ public class BeforeGameStart extends JFrame {
                 scanner = new Scanner(socket.getInputStream());
                 while (scanner.hasNextLine()) {
                     String message = scanner.nextLine();
-                    chatArea.append(message + "\n");
+                    if (message.startsWith("draw:")) {
+                        processDrawingMessage(message);
+                    } else {
+                        chatArea.append(message + "\n");
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        private void processDrawingMessage(String message) {
+            String[] parts = message.substring(5).split(",");
+            int x1 = Integer.parseInt(parts[0]);
+            int y1 = Integer.parseInt(parts[1]);
+            int x2 = Integer.parseInt(parts[2]);
+            int y2 = Integer.parseInt(parts[3]);
+            Color color = new Color(Integer.parseInt(parts[4]));
+            int penSize = Integer.parseInt(parts[5]);
+            drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+        }
     }
+
 
     class DrawingPanel extends JPanel {
         public void clearDrawing() {
             Graphics g = getGraphics();
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
+            writer.println("draw:" + 0 + "," + 0 + "," + 0 + "," +0 + "," + currentColor.getRGB() + "," + currentPenSize);
+            writer.flush();
         }
 
+        public void drawLine(int x1, int y1, int x2, int y2, Color color, int penSize){
+            Graphics2D g = (Graphics2D) getGraphics();
+            g.setColor(color);
+            g.setStroke(new BasicStroke(penSize));
+            g.drawLine(x1, y1, x2, y2);
+        }
 
         public DrawingPanel() {
             addMouseListener(new MouseAdapter() {
@@ -251,6 +274,7 @@ public class BeforeGameStart extends JFrame {
                     x1Temp = e.getX();
                     y1Temp = e.getY();
 
+
                 }
 
             });
@@ -260,13 +284,17 @@ public class BeforeGameStart extends JFrame {
 
                     // Draw a line with the current color
                     Graphics2D g = (Graphics2D) getGraphics();
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setColor(currentColor);
+                    g.setStroke(new BasicStroke(currentPenSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                     g.drawLine(x1Temp, y1Temp, e.getX(), e.getY());
-                    g.setStroke(new BasicStroke(20));
                     x1Temp = e.getX();
                     y1Temp = e.getY();
                     vector.add(e.getX());
                     vector.add(e.getY());
+
+                    writer.println("draw:" + x1Temp + "," + y1Temp + "," + e.getX() + "," + e.getY() + "," + currentColor.getRGB() + "," + currentPenSize);
+                    writer.flush();
                 }
             });
         }
