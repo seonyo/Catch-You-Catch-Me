@@ -219,7 +219,11 @@ public class BeforeGameStart extends JFrame {
                     String message = scanner.nextLine();
                     if (message.startsWith("draw:")) {
                         processDrawingMessage(message);
-                    } else {
+                    } else if (message.equals("clear")) {
+                        System.out.println("야야야");
+                        processClearMessage(message);
+                    }
+                    else {
                         chatArea.append(message + "\n");
                     }
                 }
@@ -237,6 +241,11 @@ public class BeforeGameStart extends JFrame {
             int penSize = Integer.parseInt(parts[5]);
             drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
         }
+
+        private void processClearMessage(String message){
+            drawingPanel.clearDrawing();
+        }
+
     }
 
 
@@ -245,8 +254,6 @@ public class BeforeGameStart extends JFrame {
             Graphics g = getGraphics();
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
-            writer.println("draw:" + 0 + "," + 0 + "," + 0 + "," +0 + "," + currentColor.getRGB() + "," + currentPenSize);
-            writer.flush();
         }
 
         public void drawLine(int x1, int y1, int x2, int y2, Color color, int penSize){
