@@ -131,6 +131,13 @@ public class ConnectionMgr {
 				"name VARCHAR(20)" +
 				");");
 
+		stmt.executeUpdate("DROP TABLE IF EXISTS rank");
+		// 테이블 생성
+		stmt.executeUpdate("CREATE TABLE rank (" +
+				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+				"name VARCHAR(255)" +
+				");");
+
 		// 사용 후 close
 		stmt.close();
 //		rs.close();
