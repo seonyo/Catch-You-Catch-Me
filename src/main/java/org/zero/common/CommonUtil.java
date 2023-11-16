@@ -1,7 +1,5 @@
 package org.zero.common;
 
-import org.zero.frame.Main;
-
 import java.awt.*;
 
 import javax.swing.JFrame;
@@ -18,7 +16,7 @@ public class CommonUtil {
 	public static Font semiLargeFont = new Font("Noto Sans KR", Font.BOLD, 25);
 	public static Font largeFont = new Font("Noto Sans KR", Font.BOLD, 30);
 	public static Font timeFont = new Font("Noto Sans KR", Font.BOLD, 64);
-	public static Color titleColor = new Color(142,110,0);
+	public static Color mainColor = new Color(142,110,0);
 	public static void settings(JFrame f) {
 		f.setSize(WIDTH,HEIGHT);
 //		f.setSize(750,500);

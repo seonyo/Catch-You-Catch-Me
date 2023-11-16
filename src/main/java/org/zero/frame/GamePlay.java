@@ -15,14 +15,12 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static org.zero.common.CommonUtil.*;
 import static org.zero.db.ConnectionMgr.getConnection;
 
 
 public class GamePlay extends JFrame {
     Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
-    private JPanel backgroundPanel;
     Image red = new ImageIcon(Main.class.getResource("/static/img/red.png")).getImage();
     Image orange = new ImageIcon(Main.class.getResource("/static/img/orange.png")).getImage();
     Image yellow = new ImageIcon(Main.class.getResource("/static/img/yellow.png")).getImage();
@@ -33,7 +31,7 @@ public class GamePlay extends JFrame {
     Image black = new ImageIcon(Main.class.getResource("/static/img/black.png")).getImage();
     Image erase = new ImageIcon(Main.class.getResource("/static/img/erase.png")).getImage();
     Image trash = new ImageIcon(Main.class.getResource("/static/img/trash.png")).getImage();
-
+    private JPanel backgroundPanel;
     private Color currentColor = new Color(0, 0, 0);
     private int currentPenSize = 5; // 펜 굵기
     private int startX, startY; // 그림 그리기 시작 위치
@@ -56,11 +54,17 @@ public class GamePlay extends JFrame {
     ArrayList<String> nameArr = new ArrayList<>(
             Arrays.asList("노하은", "정선영", "이지수", "박화경")
     );
+    private Thread p_display, t_display;
+    private JLabel minute, second, w3;
+    private int mm, ss, ms, t = 0;
+    private String currentTime;// 현재 시간
+
     public GamePlay() {
 
         CommonUtil.settings(this);
         dropCurrentTopic();// 현재 주제 초기화
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
+        setTimer(this.backgroundPanel);// timer
 
         JPanel pancelP = new JPanel();
         pancelP.setBounds(40, 360, 470, 107);
@@ -133,24 +137,24 @@ public class GamePlay extends JFrame {
 
         //제시어 Label 추가 코드
         JLabel categoryJL = new JLabel("제시어");
-        categoryJL.setForeground(new Color(89,89,89));
-        categoryJL.setBounds(540,358,200,50);
+        categoryJL.setForeground(new Color(89, 89, 89));
+        categoryJL.setBounds(540, 358, 200, 50);
         categoryJL.setFont(semiMidFont);
         backgroundPanel.add(categoryJL);
 
-        this.currentTopic = findCurrentTopic(this.currentTopic);
+        this.currentTopic = setCurrentTopic(this.currentTopic);
         categoryContentJL = new JLabel(this.currentTopic);
         saveCurrentTopic(this.currentTopic);
         categoryContentJL.setHorizontalAlignment(JLabel.CENTER);
-        categoryContentJL.setForeground(new Color(0,0,0));
-        categoryContentJL.setBounds(513,392,100,50);
+        categoryContentJL.setForeground(new Color(0, 0, 0));
+        categoryContentJL.setBounds(513, 392, 100, 50);
         categoryContentJL.setFont(semiMidFont);
         backgroundPanel.add(categoryContentJL);
 
         // 문제 바꾸는 코드
         JButton changeBtn = new JButton("문제변경");
         changeBtn.addActionListener(e -> {
-            this.currentTopic = findCurrentTopic(this.currentTopic);
+            this.currentTopic = setCurrentTopic(this.currentTopic);
             categoryContentJL.setText(this.currentTopic);
         });
         changeBtn.setBounds(616, 368, 90, 30);
@@ -162,13 +166,13 @@ public class GamePlay extends JFrame {
         int nameX = 522;
         int nameY = 68;
         //유저 이름 추가
-        for(int i =0; i<nameArr.size(); i++){
+        for (int i = 0; i < nameArr.size(); i++) {
             JLabel nameJL = new JLabel(nameArr.get(i));
-            nameJL.setBounds(nameX,nameY,60,60);
+            nameJL.setBounds(nameX, nameY, 60, 60);
             backgroundPanel.add(nameJL);
             nameX += 45;
 
-            if(i == 1) {
+            if (i == 1) {
                 nameX = 522;
                 nameY = 88;
             }
@@ -240,7 +244,7 @@ public class GamePlay extends JFrame {
         });
     }
 
-    // 주제
+    // db table current_topic에 있는 모든 주제 초기화 (GamePlay가 시작될 때만 사용)
     private void dropCurrentTopic() {
         try {
             conn = getConnection(DB.MySQL.JDBC_URL);
@@ -250,13 +254,15 @@ public class GamePlay extends JFrame {
             ps = conn.prepareStatement(sql);
 
             int deleteCount = ps.executeUpdate();
-            System.out.println(deleteCount+" 삭제됨");
+            System.out.println(deleteCount + " 삭제됨");
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("현재 주제 초기화 실패");
         }
     }
-    private static String findCurrentTopic(String currentTopic) {
+
+    // 현재 주제 정하기
+    private static String setCurrentTopic(String currentTopic) {
         try {
             conn = getConnection(DB.MySQL.JDBC_URL);
             stmt = conn.createStatement();
@@ -289,12 +295,13 @@ public class GamePlay extends JFrame {
         return currentTopic;
     }
 
+    // 정한 주제 db에 저장
     private static void saveCurrentTopic(String currentTopic) {
         try {
             conn = getConnection(DB.MySQL.JDBC_URL);
             stmt = conn.createStatement();
 
-            String query = "INSERT INTO current_topic (name) VALUES ('"+currentTopic+"')";
+            String query = "INSERT INTO current_topic (name) VALUES ('" + currentTopic + "')";
             stmt.executeUpdate(query);
 
             // 사용 후 close
@@ -305,9 +312,10 @@ public class GamePlay extends JFrame {
         }
     }
 
+    // 맞추거나 패스했을 경우, 새 주제 정하기
     private void changeCurrentTopic() {
         writer.println("[ 정답: " + currentTopic + " ]");
-        this.currentTopic = findCurrentTopic(this.currentTopic);
+        this.currentTopic = setCurrentTopic(this.currentTopic);
         categoryContentJL.setText(this.currentTopic);
         saveCurrentTopic(this.currentTopic);
     }
@@ -331,6 +339,67 @@ public class GamePlay extends JFrame {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    // 타이머
+    private void setTimer(JPanel backgroundPanel) {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        JLabel c = new JLabel(" : ");
+        minute = new JLabel("00");
+        second = new JLabel("00");
+        new TimerRuning();
+
+        p.add(minute);
+        p.add(c);
+        p.add(second);
+
+        p.setBounds(615, 90, 90, 40);
+        p.setBackground(new Color(255, 255,253));
+        backgroundPanel.add(p);
+
+        minute.setFont(new Font("courier", Font.BOLD, 20));
+        second.setFont(new Font("courier", Font.BOLD, 20));
+        c.setFont(new Font("courier", Font.BOLD, 20));
+
+        minute.setForeground(mainColor);
+        second.setForeground(mainColor);
+        c.setForeground(mainColor);
+
+    }
+
+    // 타이머 구현
+    class TimerRuning {
+
+        public TimerRuning() {
+
+            p_display = new Thread(() -> {
+                mm = Integer.parseInt(minute.getText());
+                ss = Integer.parseInt(second.getText());
+
+                while (p_display == Thread.currentThread()) {
+
+                    mm = t % (1000 * 60) / 100 / 60;
+                    ss = t % (1000 * 60) / 100 % 60;
+                    ms = t % 100;
+
+                    try {
+                        Thread.sleep(10);
+
+                        minute.setText(String.format("%02d", mm));
+                        second.setText(String.format("%02d", ss));
+
+                        t++;
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    currentTime = String.format("%02d : %02d : %02d", mm, ss, ms);
+                    //System.out.println(currentTime);
+                }
+            });
+            p_display.start();
         }
     }
 
@@ -379,8 +448,9 @@ public class GamePlay extends JFrame {
                 }
             });
         }
-
     }
+
+
     public static void main(String[] args) {
         new GamePlay();
     }
