@@ -2,7 +2,7 @@ package org.zero.frame;
 import org.zero.common.CommonUtil;
 import javax.swing.*;
 import java.awt.*;
-import static org.zero.common.CommonUtil.*;
+
 public class Result extends JFrame {
 	private JPanel backgroundPanel;
 	private JLabel title;
@@ -19,7 +19,7 @@ public class Result extends JFrame {
 		// 제목
 		title = new JLabel("Result");
 		title.setFont(CommonUtil.titleFont);
-		title.setForeground(CommonUtil.titleColor);
+		title.setForeground(CommonUtil.mainColor);
 		title.setBounds(330, 93, 120, 40);
 		backgroundPanel.add(title);
 		// 랭킹 패널 생성
@@ -71,7 +71,7 @@ public class Result extends JFrame {
 			// 플레이타임
 			JLabel timeLabel = new JLabel("30:30");
 			timeLabel.setFont(CommonUtil.semiLargeFont);
-			timeLabel.setForeground(CommonUtil.titleColor);
+			timeLabel.setForeground(CommonUtil.mainColor);
 			timeLabel.setBounds(440, 10, 120, 20);
 			this.add(timeLabel);
 			// 팀원 명단
