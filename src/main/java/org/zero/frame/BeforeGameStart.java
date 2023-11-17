@@ -229,14 +229,16 @@ public class BeforeGameStart extends JFrame {
             }
         }
         private void processDrawingMessage(String message) {
-            String[] parts = message.substring(5).split(",");
-            int x1 = Integer.parseInt(parts[0]);
-            int y1 = Integer.parseInt(parts[1]);
-            int x2 = Integer.parseInt(parts[2]);
-            int y2 = Integer.parseInt(parts[3]);
-            Color color = new Color(Integer.parseInt(parts[4]));
-            int penSize = Integer.parseInt(parts[5]);
-            drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            if (drawingPanel != null) {
+                String[] parts = message.substring(5).split(",");
+                int x1 = Integer.parseInt(parts[0]);
+                int y1 = Integer.parseInt(parts[1]);
+                int x2 = Integer.parseInt(parts[2]);
+                int y2 = Integer.parseInt(parts[3]);
+                Color color = new Color(Integer.parseInt(parts[4]));
+                int penSize = Integer.parseInt(parts[5]);
+                drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            }
         }
 
         private void processClearMessage(String message){

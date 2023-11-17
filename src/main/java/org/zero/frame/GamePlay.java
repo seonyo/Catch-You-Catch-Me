@@ -212,10 +212,11 @@ public class GamePlay extends JFrame {
         try {
             Socket socket = new Socket("localhost", 8090);
             writer = new PrintWriter(socket.getOutputStream());
-            writer.println(userName);
+
+            writer.println("user:" + userName);
             writer.flush();
 
-            Thread readerThread = new Thread(new IncomingReader(socket));
+            Thread readerThread = new Thread(new GamePlay.IncomingReader(socket));
             readerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
