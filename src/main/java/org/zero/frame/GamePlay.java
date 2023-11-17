@@ -32,6 +32,7 @@ public class GamePlay extends JFrame {
     Image erase = new ImageIcon(Main.class.getResource("/static/img/erase.png")).getImage();
     Image trash = new ImageIcon(Main.class.getResource("/static/img/trash.png")).getImage();
     private JPanel backgroundPanel;
+    private static DrawingPanel drawingPanel;
     private Color currentColor = new Color(0, 0, 0);
     private int currentPenSize = 5; // 펜 굵기
     private int startX, startY; // 그림 그리기 시작 위치
@@ -72,7 +73,7 @@ public class GamePlay extends JFrame {
         pancelP.setBackground(new Color(255, 255, 255));
         backgroundPanel.add(pancelP);
 
-        DrawingPanel drawingPanel = new DrawingPanel();
+        drawingPanel = new DrawingPanel();
         this.add(drawingPanel);
         drawingPanel.setBackground(new Color(255, 255, 255));
         drawingPanel.setBounds(40, 90, 470, 265);
@@ -213,8 +214,6 @@ public class GamePlay extends JFrame {
             writer = new PrintWriter(socket.getOutputStream());
             writer.println(userName);
             writer.flush();
-            userCnt++;
-            System.out.println("유저수: " + userCnt);
 
             Thread readerThread = new Thread(new IncomingReader(socket));
             readerThread.start();
@@ -335,12 +334,37 @@ public class GamePlay extends JFrame {
                 scanner = new Scanner(socket.getInputStream());
                 while (scanner.hasNextLine()) {
                     String message = scanner.nextLine();
-                    chatArea.append(message + "\n");
+                    if (message.startsWith("draw:")) {
+                        processDrawingMessage(message);
+                    } else if (message.equals("clear")) {
+                        System.out.println("야야야");
+                        processClearMessage(message);
+                    } else if(message.startsWith("userCnt:")){
+                        System.out.println(message);
+                    }
+                    else {
+                        chatArea.append(message + "\n");
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        private void processDrawingMessage(String message) {
+            String[] parts = message.substring(5).split(",");
+            int x1 = Integer.parseInt(parts[0]);
+            int y1 = Integer.parseInt(parts[1]);
+            int x2 = Integer.parseInt(parts[2]);
+            int y2 = Integer.parseInt(parts[3]);
+            Color color = new Color(Integer.parseInt(parts[4]));
+            int penSize = Integer.parseInt(parts[5]);
+            drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+        }
+
+        private void processClearMessage(String message){
+            drawingPanel.clearDrawing();
+        }
+
     }
 
     // 타이머
@@ -410,6 +434,12 @@ public class GamePlay extends JFrame {
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
         }
+        public void drawLine(int x1, int y1, int x2, int y2, Color color, int penSize){
+            Graphics2D g = (Graphics2D) getGraphics();
+            g.setColor(color);
+            g.setStroke(new BasicStroke(penSize));
+            g.drawLine(x1, y1, x2, y2);
+        }
 
 
         public DrawingPanel() {
@@ -439,13 +469,17 @@ public class GamePlay extends JFrame {
 
                     // Draw a line with the current color
                     Graphics2D g = (Graphics2D) getGraphics();
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setColor(currentColor);
+                    g.setStroke(new BasicStroke(currentPenSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                     g.drawLine(x1Temp, y1Temp, e.getX(), e.getY());
-                    g.setStroke(new BasicStroke(20));
                     x1Temp = e.getX();
                     y1Temp = e.getY();
                     vector.add(e.getX());
                     vector.add(e.getY());
+
+                    writer.println("draw:" + x1Temp + "," + y1Temp + "," + e.getX() + "," + e.getY() + "," + currentColor.getRGB() + "," + currentPenSize);
+                    writer.flush();
                 }
             });
         }
