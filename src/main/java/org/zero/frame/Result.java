@@ -21,9 +21,11 @@ public class Result extends JFrame {
     private static Statement stmt = null;
     private static PreparedStatement ps = null;
     private static ResultSet rs = null;
-    private static int rankIndex = 0;
     private String[][] playerNames = null;
+    private String[] teamTimes = null;
     private int teamNum = 0;
+    private static int nameRankIndex = 0;
+    private static int timeRankIndex = 0;
 
     public Result() {
         // 기본 설정
@@ -41,17 +43,15 @@ public class Result extends JFrame {
         teamNum = getTeamNum();
         playerNames = new String[teamNum][4];
         getPlayerName();// 각 팀별로 플레이어 이름을 2차원배열에 저장
-//        for ( int i = 0; i < playerNames.length; i++ ) {
-//            for ( int j = 0; j < playerNames[i].length; j++ ) {
-//                System.out.print(playerNames[i][j]+", ");
-//            }
-//            System.out.println();
-//        }
+        teamTimes = new String[teamNum];
+        // 각 팀별로 걸린 시간을 1차원배열에 저장
+
         // 랭킹 패널 생성
         rankPanels = new RankPanel[teamNum];
         for (int i = 0; i < rankPanels.length; i++) {
             rankPanels[i] = new RankPanel(i + 1);
             rankPanels[i].setBounds(0, 5 + i * 60, 550, 45);
+            rankPanels[i].setBackground(new Color(0, 0, 0, 0));
 //            setPlayerNamesToRanking(rankPanels[i]);
             rankBackgroundPanel.add(rankPanels[i]);
         }
@@ -142,19 +142,13 @@ public class Result extends JFrame {
 
             int i = 0;
             while (rs.next()) {
+                // db에서 time컬럼의 값을 가져온다
                 times[i] = new JLabel(rs.getString("time"));
-                System.out.println(times[i].getText());
-                // 플레이타임
+                // 플레이타임 1차원배열에 저장
                 String[] currentTime = times[i].getText().split(":");
-                String time = String.format("%02d : %02d", Integer.parseInt(currentTime[0]), Integer.parseInt(currentTime[1]));// ms는 반영하지 않는다.
-                JLabel timeLabel = new JLabel(time);
-                timeLabel.setFont(CommonUtil.semiLargeFont);
-                timeLabel.setForeground(CommonUtil.mainColor);
-                timeLabel.setBounds(440, 10, 520, 20);
-                panel.add(timeLabel);
+                teamTimes[i++] = String.format("%02d : %02d", Integer.parseInt(currentTime[0]), Integer.parseInt(currentTime[1]));// ms는 반영하지 않는다
             }
-
-            //findUserName(this.userId);
+            
             // 사용 후 close
             rs.close();
         } catch (SQLException e) {
@@ -163,28 +157,36 @@ public class Result extends JFrame {
         }
     }
 
+    // 팀별 이름 랭킹에 보여주기
     private void setPlayerNamesToRanking(JPanel panel) {
-        JLabel[] players = new JLabel[playerNames[rankIndex].length];
+        JLabel[] players = new JLabel[playerNames[nameRankIndex].length];
 
+        // 팀별 이름들을 묶어서 문자열로 저장
         String teamPlayers = "";
-        for (int i = 0; i < playerNames[rankIndex].length; i++) {
-            System.out.print(playerNames[rankIndex][i] + " ");
-            teamPlayers += playerNames[rankIndex][i] + "  ";
+        for (int i = 0; i < playerNames[nameRankIndex].length; i++) {
+            teamPlayers += playerNames[nameRankIndex][i] + "  ";
         }
 
-        // 수정된 부분
-        for (int i = 0; i < playerNames[rankIndex].length; i++) {
-            players[i] = new JLabel(playerNames[rankIndex][i]);
+        // 이름들 배치
+        for (int i = 0; i < playerNames[nameRankIndex].length; i++) {
+            players[i] = new JLabel(playerNames[nameRankIndex][i]);
             players[i].setFont(CommonUtil.semiMidFont);
             players[i].setBounds(80 + i * 90, 12, 400, 20);
             panel.add(players[i]);
         }
-
-        System.out.println();
-        rankIndex++;
-        System.out.println(rankIndex);
+        nameRankIndex++;
     }
 
+    // 팀별 걸린 시간 랭킹에 보여주기
+    private void setTeamTimesToRanking(JPanel panel) {
+        JLabel timeLabel = new JLabel(teamTimes[timeRankIndex]);
+        System.out.println(teamTimes[timeRankIndex]);
+        timeLabel.setFont(CommonUtil.semiLargeFont);
+        timeLabel.setForeground(CommonUtil.mainColor);
+        timeLabel.setBounds(440, 10, 120, 20);
+        panel.add(timeLabel);
+        timeRankIndex++;
+    }
 
     private class RankPanel extends JPanel {
         public RankPanel(int rank) {
@@ -204,6 +206,9 @@ public class Result extends JFrame {
 
             // 팀원 명단
             setPlayerNamesToRanking(this);
+
+            // 걸린 시간
+            setTeamTimesToRanking(this);
 
             // 랭킹 배경 이미지
             JLabel rankBackImgLabel = new JLabel(new ImageIcon(Main.class.getResource("/static/img/rank_background.png")));
