@@ -7,8 +7,8 @@ public class ConnectionMgr {
 	private static Statement stmt;
 	private static String url = DB.MySQL.JDBC_URL;
 	private static String user = "root";
-//	private static String password = "gkdms~!1357";
-	private static String password = "990327";
+	private static String password = "gkdms~!1357";
+	//private static String password = "990327";
 
 	// Connection 가져오기
 	public static Connection getConnection(String jdbcUrl) {
@@ -42,7 +42,7 @@ public class ConnectionMgr {
 		}
 		return conn;
 	}
-	
+
 	public static void main(String[] args) throws SQLException {
 		// 커넥션 객체 만들기
 		conn = getConnection(DB.MySQL.JDBC_URL);
@@ -131,6 +131,26 @@ public class ConnectionMgr {
 				"name VARCHAR(20)" +
 				");");
 
+		stmt.executeUpdate("DROP TABLE IF EXISTS ranking");
+		// 테이블 생성
+		stmt.executeUpdate("CREATE TABLE ranking (" +
+				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+				"name VARCHAR(255)," +
+				"time TIME," +
+				"ranking INT);");
+
+		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+				"('하은,지민,선영', now())");
+		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+				"('하,지,선', now()+1)");
+		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+				"('은,민,영', now()+2)");
+		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+				"('하은1,지민1,선영1', now()+3)");
+		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+				"('하은2,지민2,선영2', now()-5)");
+
+		//stmt.executeUpdate("SELECT name FROM ranking ORDER BY time");
 		// 사용 후 close
 		stmt.close();
 //		rs.close();
