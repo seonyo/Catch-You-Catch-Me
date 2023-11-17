@@ -113,12 +113,8 @@ public class BeforeGameStart extends JFrame {
 
         JButton readyBtn = new JButton("준비");
         readyBtn.addActionListener(e -> {
-            userReadyNowCnt++;
-            writer.println("준비완료: " + userReadyNowCnt);
-            if (userCnt == userReadyNowCnt) {
-                this.setVisible(false);
-                new GamePlay(this.userName);
-            }
+            this.setVisible(false);
+            new GamePlay(this.userName);
         });
         readyBtn.setBounds(616, 368, 90, 30);
         readyBtn.setBackground(new Color(255, 228, 131));
@@ -172,10 +168,9 @@ public class BeforeGameStart extends JFrame {
         try {
             Socket socket = new Socket("localhost", 8090);
             writer = new PrintWriter(socket.getOutputStream());
-            writer.println(userName);
+
+            writer.println("user:" + userName);
             writer.flush();
-            userCnt++;
-            System.out.println("유저수: " + userCnt);
 
             Thread readerThread = new Thread(new IncomingReader(socket));
             readerThread.start();
@@ -222,6 +217,8 @@ public class BeforeGameStart extends JFrame {
                     } else if (message.equals("clear")) {
                         System.out.println("야야야");
                         processClearMessage(message);
+                    } else if(message.startsWith("userCnt:")){
+                        System.out.println(message);
                     }
                     else {
                         chatArea.append(message + "\n");
