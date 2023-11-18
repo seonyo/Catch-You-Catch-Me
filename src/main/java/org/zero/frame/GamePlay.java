@@ -51,14 +51,21 @@ public class GamePlay extends JFrame {
     private String currentTopic;// 현재 주제
     private int prevMax = 0; // 이전 최대 값
     public static int userCnt = 0;// 현재 유저 수
+    private static int readyUserCnt = 0;
     //유저 이름 (임의의 값으로 초기화)
     ArrayList<String> nameArr = new ArrayList<>(
             Arrays.asList("노하은", "정선영", "이지수", "박화경")
     );
-    private Thread p_display, t_display;
-    private JLabel minute, second, w3;
-    private int mm, ss, ms, t = 0;
-    private String currentTime;// 현재 시간
+    private static Thread p_display;
+    private Thread t_display;
+    private static JLabel minute;
+    private static JLabel second;
+    private JLabel w3;
+    private static int mm;
+    private static int ss;
+    private static int ms;
+    private static int t = 0;
+    private static String currentTime;// 현재 시간
 
     public GamePlay(String userName) {
 
@@ -342,6 +349,9 @@ public class GamePlay extends JFrame {
                         processClearMessage(message);
                     } else if(message.startsWith("userCnt:")){
                         System.out.println(message);
+                        userCnt = Integer.parseInt(message.substring(8));
+                    } else if(message.equals("timerStart")){
+                        startTimer();
                     }
                     else {
                         chatArea.append(message + "\n");
@@ -366,6 +376,10 @@ public class GamePlay extends JFrame {
             drawingPanel.clearDrawing();
         }
 
+        private static void startTimer() {
+            new TimerRuning();
+        }
+
     }
 
     // 타이머
@@ -375,7 +389,6 @@ public class GamePlay extends JFrame {
         JLabel c = new JLabel(" : ");
         minute = new JLabel("00");
         second = new JLabel("00");
-        new TimerRuning();
 
         p.add(minute);
         p.add(c);
@@ -396,7 +409,7 @@ public class GamePlay extends JFrame {
     }
 
     // 타이머 구현
-    class TimerRuning {
+    public static class TimerRuning {
 
         public TimerRuning() {
 
@@ -441,7 +454,6 @@ public class GamePlay extends JFrame {
             g.setStroke(new BasicStroke(penSize));
             g.drawLine(x1, y1, x2, y2);
         }
-
 
         public DrawingPanel() {
             addMouseListener(new MouseAdapter() {
@@ -488,6 +500,6 @@ public class GamePlay extends JFrame {
 
 
     public static void main(String[] args) {
-        new GamePlay(userName);
+       new GamePlay(userName);
     }
 }
