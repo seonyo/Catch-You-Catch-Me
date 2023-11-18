@@ -31,7 +31,7 @@ public class GamePlay extends JFrame {
     Image black = new ImageIcon(Main.class.getResource("/static/img/black.png")).getImage();
     Image erase = new ImageIcon(Main.class.getResource("/static/img/erase.png")).getImage();
     Image trash = new ImageIcon(Main.class.getResource("/static/img/trash.png")).getImage();
-    private JPanel backgroundPanel;
+    private static JPanel backgroundPanel;
     private static DrawingPanel drawingPanel;
     private Color currentColor = new Color(0, 0, 0);
     private int currentPenSize = 5; // 펜 굵기
@@ -51,14 +51,21 @@ public class GamePlay extends JFrame {
     private String currentTopic;// 현재 주제
     private int prevMax = 0; // 이전 최대 값
     public static int userCnt = 0;// 현재 유저 수
+    private static int readyUserCnt = 0;
     //유저 이름 (임의의 값으로 초기화)
     ArrayList<String> nameArr = new ArrayList<>(
             Arrays.asList("노하은", "정선영", "이지수", "박화경")
     );
-    private Thread p_display, t_display;
-    private JLabel minute, second, w3;
-    private int mm, ss, ms, t = 0;
-    private String currentTime;// 현재 시간
+    private static Thread p_display;
+    private Thread t_display;
+    private static JLabel minute;
+    private static JLabel second;
+    private JLabel w3;
+    private static int mm;
+    private static int ss;
+    private static int ms;
+    private static int t = 0;
+    private static String currentTime;// 현재 시간
 
     public GamePlay(String userName) {
 
@@ -342,6 +349,9 @@ public class GamePlay extends JFrame {
                         processClearMessage(message);
                     } else if(message.startsWith("userCnt:")){
                         System.out.println(message);
+                        userCnt = Integer.parseInt(message.substring(8));
+                    } else if(message.startsWith("Time")){
+                        processTimeMessage(message);
                     }
                     else {
                         chatArea.append(message + "\n");
@@ -366,16 +376,18 @@ public class GamePlay extends JFrame {
             drawingPanel.clearDrawing();
         }
 
+        private void processTimeMessage(String message){
+            setTextTimer(backgroundPanel,  message);
+        }
     }
 
     // 타이머
-    private void setTimer(JPanel backgroundPanel) {
+    private static void setTimer(JPanel backgroundPanel) {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         JLabel c = new JLabel(" : ");
         minute = new JLabel("00");
         second = new JLabel("00");
-        new TimerRuning();
 
         p.add(minute);
         p.add(c);
@@ -395,38 +407,9 @@ public class GamePlay extends JFrame {
 
     }
 
-    // 타이머 구현
-    class TimerRuning {
-
-        public TimerRuning() {
-
-            p_display = new Thread(() -> {
-                mm = Integer.parseInt(minute.getText());
-                ss = Integer.parseInt(second.getText());
-
-                while (p_display == Thread.currentThread()) {
-
-                    mm = t % (1000 * 60) / 100 / 60;
-                    ss = t % (1000 * 60) / 100 % 60;
-                    ms = t % 100;
-
-                    try {
-                        Thread.sleep(10);
-
-                        minute.setText(String.format("%02d", mm));
-                        second.setText(String.format("%02d", ss));
-
-                        t++;
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    currentTime = String.format("%02d : %02d : %02d", mm, ss, ms);
-                    //System.out.println(currentTime);
-                }
-            });
-            p_display.start();
-        }
+    private static void setTextTimer(JPanel backgroundPanel, String message){
+        minute.setText(message.substring(8,10));
+        second.setText(message.substring(12,14));
     }
 
     class DrawingPanel extends JPanel {
@@ -441,7 +424,6 @@ public class GamePlay extends JFrame {
             g.setStroke(new BasicStroke(penSize));
             g.drawLine(x1, y1, x2, y2);
         }
-
 
         public DrawingPanel() {
             addMouseListener(new MouseAdapter() {
@@ -488,6 +470,6 @@ public class GamePlay extends JFrame {
 
 
     public static void main(String[] args) {
-        new GamePlay(userName);
+       new GamePlay(userName);
     }
 }

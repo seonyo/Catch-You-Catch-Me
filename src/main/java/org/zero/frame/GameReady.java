@@ -20,7 +20,7 @@ public class GameReady extends JFrame{
 	private String content="";
 	private String name="";// 입력받는 이름
 	private int categoryIndex;
-	public static Connection conn = null;
+	public static Connection conn = getConnection("dasdaf");
 	public static Statement stmt = null;
 	private int userId;// primary key
 	private String userName;
