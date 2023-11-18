@@ -24,12 +24,14 @@ public class Result extends JFrame {
     private String[][] playerNames = null;
     private String[] teamTimes = null;
     private int teamNum = 0;
-    private static int nameRankIndex = 0;
-    private static int timeRankIndex = 0;
+    private static int nameRankIndex;
+    private static int timeRankIndex;
 
     public Result() {
         // 기본 설정
         CommonUtil.settings(this);
+        nameRankIndex = 0;
+        timeRankIndex = 0;
         // 배경 이미지
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
         // 제목
@@ -41,10 +43,9 @@ public class Result extends JFrame {
 
         // 팀 수 세기
         teamNum = getTeamNum();
-        playerNames = new String[teamNum][4];
-        getPlayerName();// 각 팀별로 플레이어 이름을 2차원배열에 저장
-        teamTimes = new String[teamNum];
-        // 각 팀별로 걸린 시간을 1차원배열에 저장
+        playerNames = new String[teamNum][4];// 각 팀별로 플레이어 이름을 2차원배열에 저장
+        getPlayerName();
+        teamTimes = new String[teamNum];// 각 팀별로 걸린 시간을 1차원배열에 저장
 
         // 랭킹 패널 생성
         rankPanels = new RankPanel[teamNum];
@@ -118,12 +119,8 @@ public class Result extends JFrame {
             while (rs.next()) {
                 players[i] = new JLabel(rs.getString("name"));
                 playerNames[i] = players[i].getText().split(",");
-//                players[i].setFont(CommonUtil.semiMidFont);
-//                players[i].setBounds(80 + i * 150, 12 + i * 1, 400, 10);
                 i++;
             }
-
-            //findUserName(this.userId);
             // 사용 후 close
             rs.close();
         } catch (SQLException e) {
@@ -196,13 +193,9 @@ public class Result extends JFrame {
             rankLabel.setFont(CommonUtil.semiMidFont);
             rankLabel.setBounds(30, 10, 20, 22);
             this.add(rankLabel);
+
             // 플레이타임
             getTeamTime(this);
-//            JLabel timeLabel = new JLabel("30:30");
-//            timeLabel.setFont(CommonUtil.semiLargeFont);
-//            timeLabel.setForeground(CommonUtil.mainColor);
-//            timeLabel.setBounds(440, 10, 120, 20);
-//            this.add(timeLabel);
 
             // 팀원 명단
             setPlayerNamesToRanking(this);
@@ -214,7 +207,6 @@ public class Result extends JFrame {
             JLabel rankBackImgLabel = new JLabel(new ImageIcon(Main.class.getResource("/static/img/rank_background.png")));
             rankBackImgLabel.setBounds(-107, 0, CommonUtil.WIDTH, 45);
             this.add(rankBackImgLabel);
-
         }
     }
 
