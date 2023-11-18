@@ -7,8 +7,8 @@ public class ConnectionMgr {
 	private static Statement stmt;
 	private static String url = DB.MySQL.JDBC_URL;
 	private static String user = "root";
-	private static String password = "gkdms~!1357";
-	//private static String password = "990327";
+	//private static String password = "gkdms~!1357";
+	private static String password = "990327";
 
 	// Connection 가져오기
 	public static Connection getConnection(String jdbcUrl) {

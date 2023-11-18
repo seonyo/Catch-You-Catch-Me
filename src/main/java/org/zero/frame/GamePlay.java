@@ -31,7 +31,7 @@ public class GamePlay extends JFrame {
     Image black = new ImageIcon(Main.class.getResource("/static/img/black.png")).getImage();
     Image erase = new ImageIcon(Main.class.getResource("/static/img/erase.png")).getImage();
     Image trash = new ImageIcon(Main.class.getResource("/static/img/trash.png")).getImage();
-    private JPanel backgroundPanel;
+    private static JPanel backgroundPanel;
     private static DrawingPanel drawingPanel;
     private Color currentColor = new Color(0, 0, 0);
     private int currentPenSize = 5; // 펜 굵기
@@ -350,8 +350,8 @@ public class GamePlay extends JFrame {
                     } else if(message.startsWith("userCnt:")){
                         System.out.println(message);
                         userCnt = Integer.parseInt(message.substring(8));
-                    } else if(message.equals("timerStart")){
-                        startTimer();
+                    } else if(message.startsWith("Time")){
+                        processTimeMessage(message);
                     }
                     else {
                         chatArea.append(message + "\n");
@@ -376,14 +376,13 @@ public class GamePlay extends JFrame {
             drawingPanel.clearDrawing();
         }
 
-        private static void startTimer() {
-            new TimerRuning();
+        private void processTimeMessage(String message){
+            setTextTimer(backgroundPanel,  message);
         }
-
     }
 
     // 타이머
-    private void setTimer(JPanel backgroundPanel) {
+    private static void setTimer(JPanel backgroundPanel) {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         JLabel c = new JLabel(" : ");
@@ -408,38 +407,9 @@ public class GamePlay extends JFrame {
 
     }
 
-    // 타이머 구현
-    public static class TimerRuning {
-
-        public TimerRuning() {
-
-            p_display = new Thread(() -> {
-                mm = Integer.parseInt(minute.getText());
-                ss = Integer.parseInt(second.getText());
-
-                while (p_display == Thread.currentThread()) {
-
-                    mm = t % (1000 * 60) / 100 / 60;
-                    ss = t % (1000 * 60) / 100 % 60;
-                    ms = t % 100;
-
-                    try {
-                        Thread.sleep(10);
-
-                        minute.setText(String.format("%02d", mm));
-                        second.setText(String.format("%02d", ss));
-
-                        t++;
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    currentTime = String.format("%02d : %02d : %02d", mm, ss, ms);
-                    //System.out.println(currentTime);
-                }
-            });
-            p_display.start();
-        }
+    private static void setTextTimer(JPanel backgroundPanel, String message){
+        minute.setText(message.substring(8,10));
+        second.setText(message.substring(12,14));
     }
 
     class DrawingPanel extends JPanel {
