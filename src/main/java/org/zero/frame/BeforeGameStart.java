@@ -113,12 +113,8 @@ public class BeforeGameStart extends JFrame {
 
         JButton readyBtn = new JButton("준비");
         readyBtn.addActionListener(e -> {
-            userReadyNowCnt++;
-            writer.println("준비완료: " + userReadyNowCnt);
-            if (userCnt == userReadyNowCnt) {
-                this.setVisible(false);
-                new GamePlay(this.userName);
-            }
+            this.setVisible(false);
+            new GamePlay(this.userName);
         });
         readyBtn.setBounds(616, 368, 90, 30);
         readyBtn.setBackground(new Color(255, 228, 131));
@@ -172,10 +168,9 @@ public class BeforeGameStart extends JFrame {
         try {
             Socket socket = new Socket("localhost", 8090);
             writer = new PrintWriter(socket.getOutputStream());
-            writer.println(userName);
+
+            writer.println("user:" + userName);
             writer.flush();
-            userCnt++;
-            System.out.println("유저수: " + userCnt);
 
             Thread readerThread = new Thread(new IncomingReader(socket));
             readerThread.start();
@@ -219,7 +214,13 @@ public class BeforeGameStart extends JFrame {
                     String message = scanner.nextLine();
                     if (message.startsWith("draw:")) {
                         processDrawingMessage(message);
-                    } else {
+                    } else if (message.equals("clear")) {
+                        System.out.println("야야야");
+                        processClearMessage(message);
+                    } else if(message.startsWith("userCnt:")){
+                        System.out.println(message);
+                    }
+                    else {
                         chatArea.append(message + "\n");
                     }
                 }
@@ -228,15 +229,22 @@ public class BeforeGameStart extends JFrame {
             }
         }
         private void processDrawingMessage(String message) {
-            String[] parts = message.substring(5).split(",");
-            int x1 = Integer.parseInt(parts[0]);
-            int y1 = Integer.parseInt(parts[1]);
-            int x2 = Integer.parseInt(parts[2]);
-            int y2 = Integer.parseInt(parts[3]);
-            Color color = new Color(Integer.parseInt(parts[4]));
-            int penSize = Integer.parseInt(parts[5]);
-            drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            if (drawingPanel != null) {
+                String[] parts = message.substring(5).split(",");
+                int x1 = Integer.parseInt(parts[0]);
+                int y1 = Integer.parseInt(parts[1]);
+                int x2 = Integer.parseInt(parts[2]);
+                int y2 = Integer.parseInt(parts[3]);
+                Color color = new Color(Integer.parseInt(parts[4]));
+                int penSize = Integer.parseInt(parts[5]);
+                drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            }
         }
+
+        private void processClearMessage(String message){
+            drawingPanel.clearDrawing();
+        }
+
     }
 
 
@@ -245,8 +253,6 @@ public class BeforeGameStart extends JFrame {
             Graphics g = getGraphics();
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
-            writer.println("draw:" + 0 + "," + 0 + "," + 0 + "," +0 + "," + currentColor.getRGB() + "," + currentPenSize);
-            writer.flush();
         }
 
         public void drawLine(int x1, int y1, int x2, int y2, Color color, int penSize){
