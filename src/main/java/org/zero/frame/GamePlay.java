@@ -151,15 +151,6 @@ public class GamePlay extends JFrame {
         categoryJL.setFont(semiMidFont);
         backgroundPanel.add(categoryJL);
 
-        this.currentTopic = setCurrentTopic(this.currentTopic);
-        categoryContentJL = new JLabel(this.currentTopic);
-        saveCurrentTopic(this.currentTopic);
-        categoryContentJL.setHorizontalAlignment(JLabel.CENTER);
-        categoryContentJL.setForeground(new Color(0, 0, 0));
-        categoryContentJL.setBounds(513, 392, 100, 50);
-        categoryContentJL.setFont(semiMidFont);
-        backgroundPanel.add(categoryContentJL);
-
         // 문제 바꾸는 코드
         JButton changeBtn = new JButton("문제변경");
         changeBtn.addActionListener(e -> {
@@ -213,6 +204,15 @@ public class GamePlay extends JFrame {
         this.setVisible(true);
 
         connectToServer();
+
+        this.currentTopic = setCurrentTopic(this.currentTopic);
+        categoryContentJL = new JLabel(this.currentTopic);
+        saveCurrentTopic(this.currentTopic);
+        categoryContentJL.setHorizontalAlignment(JLabel.CENTER);
+        categoryContentJL.setForeground(new Color(0, 0, 0));
+        categoryContentJL.setBounds(513, 392, 100, 50);
+        categoryContentJL.setFont(semiMidFont);
+        backgroundPanel.add(categoryContentJL);
     }
 
     private static void connectToServer() {
@@ -292,7 +292,8 @@ public class GamePlay extends JFrame {
             rs = stmt.executeQuery("SELECT * FROM topic WHERE id = " + randomValue);
             while (rs.next())
                 currentTopic = rs.getString("name");
-            System.out.println(currentTopic);
+            writer.println("topic: "+currentTopic);// 서버에게 제시어 전달
+            writer.flush();
 
             rs.close();
         } catch (SQLException e) {
