@@ -50,6 +50,7 @@ public class BeforeGameStart extends JFrame {
     public static int userCnt = 0;// 현재 유저 수
     public static int userReadyNowCnt = 0;// 현재 준비완료된 유저 수
     private static DrawingPanel drawingPanel;
+    private static boolean clearExecuted = false;
 
     public BeforeGameStart(String userName) {
 
@@ -104,6 +105,8 @@ public class BeforeGameStart extends JFrame {
                         case 9:
                             drawingPanel.clearDrawing();
                             vector.clear();
+                            writer.println("clear");
+                            writer.flush();
                             break;
                     }
                 }
@@ -174,6 +177,7 @@ public class BeforeGameStart extends JFrame {
 
             Thread readerThread = new Thread(new IncomingReader(socket));
             readerThread.start();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -215,8 +219,8 @@ public class BeforeGameStart extends JFrame {
                     if (message.startsWith("draw:")) {
                         processDrawingMessage(message);
                     } else if (message.equals("clear")) {
-                        System.out.println("야야야");
-                        processClearMessage(message);
+                        processClearMessage();
+
                     } else if(message.startsWith("userCnt:")){
                         System.out.println(message);
                     }
@@ -241,10 +245,17 @@ public class BeforeGameStart extends JFrame {
             }
         }
 
-        private void processClearMessage(String message){
-            drawingPanel.clearDrawing();
-        }
+        private void processClearMessage(){
+            if (!clearExecuted) {
+                if (drawingPanel != null) {
+                    drawingPanel.clearDrawing();
 
+                    writer.println("clear");
+                    writer.flush();
+                }
+                clearExecuted = true;
+            }
+        }
     }
 
 
@@ -253,6 +264,11 @@ public class BeforeGameStart extends JFrame {
             Graphics g = getGraphics();
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
+
+            vector.clear();
+
+            writer.println("clear");
+            writer.flush();
         }
 
         public void drawLine(int x1, int y1, int x2, int y2, Color color, int penSize){
@@ -279,8 +295,6 @@ public class BeforeGameStart extends JFrame {
                 public void mouseReleased(MouseEvent e) {
                     x1Temp = e.getX();
                     y1Temp = e.getY();
-
-
                 }
 
             });
