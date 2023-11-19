@@ -129,6 +129,8 @@ public class BeforeGameStart extends JFrame {
         exitBtn.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(null, "정말 게임을 종료하시겠습니까?");
             if (result == JOptionPane.YES_OPTION) {
+                writer.println("exit : " + userName);
+                writer.flush();
                 this.setVisible(false);
                 new Main();
             }
