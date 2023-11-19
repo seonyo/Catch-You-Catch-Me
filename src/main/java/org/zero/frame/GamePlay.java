@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -53,9 +52,7 @@ public class GamePlay extends JFrame {
     public static int userCnt = 0;// 현재 유저 수
     private static int readyUserCnt = 0;
     //유저 이름 (임의의 값으로 초기화)
-    ArrayList<String> nameArr = new ArrayList<>(
-            Arrays.asList("노하은", "정선영", "이지수", "박화경")
-    );
+    ArrayList<String> nameArr = new ArrayList<>();
     private static Thread p_display;
     private Thread t_display;
     private static JLabel minute;
@@ -66,6 +63,7 @@ public class GamePlay extends JFrame {
     private static int ms;
     private static int t = 0;
     private static String currentTime;// 현재 시간
+    private static String userTempName[];
 
     public GamePlay(String userName) {
 
@@ -172,23 +170,6 @@ public class GamePlay extends JFrame {
         changeBtn.setFont(smallFont);
         backgroundPanel.add(changeBtn);
 
-        int nameX = 522;
-        int nameY = 68;
-        //유저 이름 추가
-        for (int i = 0; i < nameArr.size(); i++) {
-            JLabel nameJL = new JLabel(nameArr.get(i));
-            nameJL.setBounds(nameX, nameY, 60, 60);
-            backgroundPanel.add(nameJL);
-            nameX += 45;
-
-            if (i == 1) {
-                nameX = 522;
-                nameY = 88;
-            }
-        }
-
-        add(backgroundPanel);
-
         JPanel chattingPn = new JPanel(new BorderLayout());
         chattingPn.setBounds(525, 140, 180, 210);
 
@@ -210,6 +191,8 @@ public class GamePlay extends JFrame {
         focusRecentChat(scrollPane);
 
         backgroundPanel.add(chattingPn);
+
+        add(backgroundPanel);
         this.setVisible(true);
 
         connectToServer();
@@ -353,8 +336,14 @@ public class GamePlay extends JFrame {
                     } else if(message.startsWith("Time")){
                         processTimeMessage(message);
                     }
+                    else if(message.startsWith("userName")) {
+                        userTempName = processAddName(message.substring(11));
+                        changeName(userTempName);
+                    }
                     else {
                         chatArea.append(message + "\n");
+                    }
+                        {
                     }
                 }
             } catch (IOException e) {
@@ -378,6 +367,41 @@ public class GamePlay extends JFrame {
 
         private void processTimeMessage(String message){
             setTextTimer(backgroundPanel,  message);
+        }
+
+        private String[] processAddName(String message){
+            message = message.substring(1, message.length() - 1);
+            String nameTempArr[] = message.split(",");
+            return nameTempArr;
+        }
+
+        private void changeName(String[] userTempName){
+            int nameX = 522;
+            int nameY = 68;
+            // 기존에 추가된 이름 JLabel 제거
+            Component[] components = backgroundPanel.getComponents();
+            for (Component component : components) {
+                if (component instanceof JLabel) {
+                    backgroundPanel.remove(component);
+                }
+            }
+
+            // 서버에서 전송된 유저 이름 추가
+            for (int i = 0; i < userTempName.length; i++) {
+                JLabel nameJL = new JLabel(userTempName[i]);
+                nameJL.setBounds(nameX, nameY, 60, 60);
+                backgroundPanel.add(nameJL);
+                nameX += 45;
+
+                if (i == 1) {
+                    nameX = 522;
+                    nameY = 88;
+                }
+            }
+
+            // 패널을 다시 그리도록 갱신
+            backgroundPanel.revalidate();
+            backgroundPanel.repaint();
         }
     }
 
