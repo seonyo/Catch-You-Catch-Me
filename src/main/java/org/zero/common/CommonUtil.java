@@ -17,6 +17,8 @@ public class CommonUtil {
 	public static Font largeFont = new Font("Noto Sans KR", Font.BOLD, 30);
 	public static Font timeFont = new Font("Noto Sans KR", Font.BOLD, 64);
 	public static Color mainColor = new Color(142,110,0);
+	public static final String HOST = "localhost";
+	public static final int PORT = 8090;
 	public static void settings(JFrame f) {
 		f.setSize(WIDTH,HEIGHT);
 //		f.setSize(750,500);

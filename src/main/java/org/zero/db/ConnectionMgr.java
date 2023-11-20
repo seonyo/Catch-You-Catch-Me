@@ -7,8 +7,8 @@ public class ConnectionMgr {
 	private static Statement stmt;
 	private static String url = DB.MySQL.JDBC_URL;
 	private static String user = "root";
-	//private static String password = "gkdms~!1357";
-	private static String password = "990327";
+	private static String password = "gkdms~!1357";
+	//private static String password = "990327";
 
 	// Connection 가져오기
 	public static Connection getConnection(String jdbcUrl) {
@@ -63,9 +63,7 @@ public class ConnectionMgr {
 		// 테이블 생성
 		stmt.executeUpdate("CREATE TABLE user (" +
 				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
-				"name VARCHAR(20), " +
-				"team_id INT" +
-				");");
+				"name VARCHAR(20));");
 
 		stmt.executeUpdate("DROP TABLE IF EXISTS topic");
 		// 테이블 생성
@@ -124,31 +122,23 @@ public class ConnectionMgr {
 				"('동공지진')," +
 				"('사악');");
 
-		stmt.executeUpdate("DROP TABLE IF EXISTS current_topic");
-		// 테이블 생성
-		stmt.executeUpdate("CREATE TABLE current_topic (" +
-				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
-				"name VARCHAR(20)" +
-				");");
-
 		stmt.executeUpdate("DROP TABLE IF EXISTS ranking");
 		// 테이블 생성
 		stmt.executeUpdate("CREATE TABLE ranking (" +
 				"id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
 				"name VARCHAR(255)," +
-				"time TIME," +
-				"ranking INT);");
+				"time TIME);");
 
 		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
-				"('하은,지민,선영', now())");
-		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
-				"('하,지,선', now()+1)");
-		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
-				"('은,민,영', now()+2)");
-		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
-				"('하은1,지민1,선영1', now()+3)");
-		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
-				"('하은2,지민2,선영2', now()-5)");
+				"('하은,선영', now())");
+//		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+//				"('미림,과학,고', now()+1)");
+//		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+//				"('영마이,스터', now()+2)");
+//		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+//				"('노하은,정선영,한교동', now()-10)");
+//		stmt.executeUpdate("INSERT INTO ranking(name, time) VALUES" +
+//				"('산리오,폼폼푸린', now()-5)");
 
 		//stmt.executeUpdate("SELECT name FROM ranking ORDER BY time");
 		// 사용 후 close

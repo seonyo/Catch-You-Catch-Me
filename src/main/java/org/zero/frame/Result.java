@@ -35,10 +35,10 @@ public class Result extends JFrame {
         // 배경 이미지
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
         // 제목
-        title = new JLabel("Result");
+        title = new JLabel("Ranking");
         title.setFont(CommonUtil.titleFont);
         title.setForeground(CommonUtil.mainColor);
-        title.setBounds(330, 93, 120, 40);
+        title.setBounds(322, 93, 120, 40);
         backgroundPanel.add(title);
 
         // 팀 수 세기
