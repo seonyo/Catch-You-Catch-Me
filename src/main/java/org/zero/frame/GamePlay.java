@@ -47,7 +47,7 @@ public class GamePlay extends JFrame {
     private static PreparedStatement ps = null;
     private static ResultSet rs = null;
     private static JLabel categoryContentJL = null;// 현재 제시어
-    private String currentTopic;// 현재 주제
+    private static String currentTopic;// 현재 주제
     private int prevMax = 0; // 이전 최대 값
     public static int userCnt = 0;// 현재 유저 수
     private static int readyUserCnt = 0;
@@ -219,12 +219,15 @@ public class GamePlay extends JFrame {
 
     private void sendMessage() {
         String message = messageField.getText();
-        if (message != null && message.replaceAll(" ", "").equals(currentTopic)) {
-            changeCurrentTopic();// 현재 주제 변경
-        }
+        System.out.println(currentTopic);
         writer.println(message);
         writer.flush();
         messageField.setText("");
+
+        if (message.equals(currentTopic)) {
+            System.out.println("굿");
+            changeCurrentTopic();// 현재 주제 변경
+        }
     }
 
     private void focusRecentChat(JScrollPane scrollPane) {
@@ -257,13 +260,14 @@ public class GamePlay extends JFrame {
 
     // 현재 주제 정하기
     private static String setCurrentTopic(String currentTopic) {
+        System.out.println(currentTopic);
         if(userCnt!=4){
             backgroundPanel.add(categoryJL);
-            categoryContentJL.setText(currentTopic.substring(8));
+            categoryContentJL.setText(currentTopic);
             backgroundPanel.add(categoryContentJL);
             backgroundPanel.revalidate();
             backgroundPanel.repaint();
-            return currentTopic.substring(8);
+            return currentTopic;
         }
         return "";
     }
@@ -273,8 +277,11 @@ public class GamePlay extends JFrame {
     // 맞추거나 패스했을 경우, 새 주제 정하기
     private void changeCurrentTopic() {
         writer.println("[ 정답: " + currentTopic + " ]");
-        this.currentTopic = setCurrentTopic(this.currentTopic);
-        categoryContentJL.setText(this.currentTopic);
+        writer.flush();
+        writer.println("topic");
+        writer.flush();
+        //currentTopic = setCurrentTopic(this.currentTopic);
+        //categoryContentJL.setText(this.currentTopic);
     }
 
     static class IncomingReader implements Runnable {
@@ -305,8 +312,9 @@ public class GamePlay extends JFrame {
                         userTempName = processAddName(message.substring(11));
                         changeName(userTempName);
                     } else if(message.startsWith("Topic")) {
+                        currentTopic = message.substring(8);
                         if (userCnt != 4) {
-                            setCurrentTopic(message);
+                            setCurrentTopic(currentTopic);
                         }
                     } else if(message.equals("repaint")){
                         System.out.println("hello");
