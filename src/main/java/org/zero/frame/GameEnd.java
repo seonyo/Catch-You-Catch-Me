@@ -1,20 +1,26 @@
 package org.zero.frame;
 
 import org.zero.common.CommonUtil;
+import org.zero.db.DB;
 
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Array;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.zero.common.CommonUtil.*;
+import static org.zero.db.ConnectionMgr.getConnection;
 
 public class GameEnd extends JFrame {
     private JPanel backgroundPanel;
     Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
     Image clock = new ImageIcon(Main.class.getResource("/static/img/clockIcon.png")).getImage();
-
+    public static Connection conn = getConnection("dasdaf");
+    public static Statement stmt = null;
     public GameEnd(String currentTime, ArrayList<String> userTempName){
         CommonUtil.settings(this);
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
@@ -99,6 +105,18 @@ public class GameEnd extends JFrame {
             dispose();
             new Main();
         });
+
+        try{
+            conn = getConnection(DB.MySQL.JDBC_URL);
+            String name= userTempName.toString().replace("[","").replace("]","");
+            String Time = currentTime.substring(7).replace(" ","");
+            String query = "INSERT INTO ranking (name, time) VALUES ('"+name+"', '"+Time+"')";
+            stmt = conn.createStatement();
+            stmt.executeUpdate(query);
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setVisible(true);
 

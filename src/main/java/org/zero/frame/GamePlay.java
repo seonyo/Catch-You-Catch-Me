@@ -70,7 +70,6 @@ public class GamePlay extends JFrame {
 
         CommonUtil.settings(this);
         this.userName = userName;
-        dropCurrentTopic();// 현재 주제 초기화
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
         setTimer(this.backgroundPanel);// timer
 
@@ -221,23 +220,6 @@ public class GamePlay extends JFrame {
                 }
             }
         });
-    }
-
-    // db table current_topic에 있는 모든 주제 초기화 (GamePlay가 시작될 때만 사용)
-    private void dropCurrentTopic() {
-        try {
-            conn = getConnection(DB.MySQL.JDBC_URL);
-            stmt = conn.createStatement();
-
-            String sql = "DELETE FROM current_topic";
-            ps = conn.prepareStatement(sql);
-
-            int deleteCount = ps.executeUpdate();
-            System.out.println(deleteCount + " 삭제됨");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("현재 주제 초기화 실패");
-        }
     }
 
     // 현재 주제 정하기
