@@ -4,6 +4,7 @@ import org.zero.common.CommonUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,11 +15,15 @@ public class GameEnd extends JFrame {
     Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
     Image clock = new ImageIcon(Main.class.getResource("/static/img/clockIcon.png")).getImage();
 
-    public GameEnd(){
+    public GameEnd(String currentTime, ArrayList<String> userTempName){
         CommonUtil.settings(this);
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         add(backgroundPanel);
+
+        System.out.println(currentTime);
+        System.out.println(userTempName);
+
 
         //clock 이미지 추가
         JPanel clockPanel = new JPanel() {
@@ -30,18 +35,38 @@ public class GameEnd extends JFrame {
         backgroundPanel.add(clockPanel);
 
         //시간 JLabel 추가
-        JLabel time = new JLabel("05:14");
-        time.setBounds(320, 159, 640, 50);
-        time.setFont(timeFont);
-        time.setForeground(new Color(142,110,0));
-        backgroundPanel.add(time);
+//        JLabel time = new JLabel("05:14");
+//        time.setBounds(320, 159, 640, 50);
+//        time.setFont(timeFont);
+//        time.setForeground(new Color(142,110,0));
+//        backgroundPanel.add(time);
 
+        JLabel c = new JLabel(" : ");
+//        JLabel minute = new JLabel(currentTime.substring(8,10));
+//        JLabel second = new JLabel(currentTime.substring(12,14));
+
+        JLabel minute = new JLabel("00");
+        JLabel second = new JLabel("11");
+
+        c.setFont(timeFont);
+        c.setForeground(new Color(142,110,0));
+        minute.setFont(timeFont);
+        minute.setForeground(new Color(142,110,0));
+        second.setFont(timeFont);
+        second.setForeground(new Color(142,110,0));
+
+        minute.setBounds(320, 162, 800, 50);
+        c.setBounds(390, 159, 640, 50);
+        second.setBounds(445, 162, 800, 50);
+
+        backgroundPanel.add(c);
+        backgroundPanel.add(minute);
+        backgroundPanel.add(second);
         //이름 Label 추가
-        ArrayList<String> name = new ArrayList<>(Arrays.asList("노하은", "정선영", "이지수", "박화경"));
         int x = 188, y = 260;
 
-        for(int i=0; i<name.size(); i++){
-            JLabel nameLabel = new JLabel(name.get(i));
+        for(int i=0; i<userTempName.size(); i++){
+            JLabel nameLabel = new JLabel(userTempName.get(i));
             nameLabel.setBounds(x,y,80,35);
             nameLabel.setForeground(new Color(79, 62, 2));
             nameLabel.setFont(semiLargeFont);
@@ -81,5 +106,7 @@ public class GameEnd extends JFrame {
 
     }
 
-    public static void main(String args[]) {new GameEnd();}
+    public static void main(String args[]) {
+        ArrayList <String> temp = new ArrayList<>();
+        new GameEnd("Time : 00 : 11", temp);}
 }

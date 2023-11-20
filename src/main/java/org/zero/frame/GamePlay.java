@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -52,7 +53,7 @@ public class GamePlay extends JFrame {
     public static int userCnt = 0;// 현재 유저 수
     private static int readyUserCnt = 0;
     //유저 이름 (임의의 값으로 초기화)
-    ArrayList<String> nameArr = new ArrayList<>();
+    static ArrayList<String> nameTempArr = new ArrayList<>();
     private static Thread p_display;
     private Thread t_display;
     private static JLabel minute;
@@ -63,7 +64,6 @@ public class GamePlay extends JFrame {
     private static int ms;
     private static int t = 0;
     private static String currentTime;// 현재 시간
-    private static String userTempName[];
     private static JLabel categoryJL;
     private static boolean clearExecuted = false;
     private static int rightCnt = 0;
@@ -263,7 +263,7 @@ public class GamePlay extends JFrame {
     // 현재 주제 정하기
     private static String setCurrentTopic(String currentTopic) {
         System.out.println(currentTopic);
-        if(userCnt!=4){
+        if(userCnt==3){
             backgroundPanel.add(categoryJL);
             categoryContentJL.setText(currentTopic);
             backgroundPanel.add(categoryContentJL);
@@ -313,11 +313,11 @@ public class GamePlay extends JFrame {
                         processTimeMessage(message);
                     }
                     else if(message.startsWith("userName")) {
-                        userTempName = processAddName(message.substring(11));
-                        changeName(userTempName);
+                        nameTempArr = processAddName(message.substring(11));
+                        changeName(nameTempArr);
                     } else if(message.startsWith("Topic")) {
                         currentTopic = message.substring(8);
-                        if (userCnt != 4) {
+                        if (userCnt == 3) {
                             setCurrentTopic(currentTopic);
                         }
                     } else if(message.equals("repaint")){
@@ -342,7 +342,7 @@ public class GamePlay extends JFrame {
 
         private void gameEnd(){
             gamePlayInstance.dispose();
-            new GameEnd();
+            new GameEnd(currentTime, nameTempArr);
         }
         private void processRepaint(){
             backgroundPanel.add(drawingPanel);
@@ -373,16 +373,18 @@ public class GamePlay extends JFrame {
         }
 
         private void processTimeMessage(String message){
+            currentTime = message;
             setTextTimer(backgroundPanel,  message);
         }
 
-        private String[] processAddName(String message){
+        private ArrayList<String> processAddName(String message){
             message = message.substring(1, message.length() - 1);
-            String nameTempArr[] = message.split(",");
+            String[] temp = message.split(",");
+            nameTempArr = new ArrayList<>(Arrays.asList(temp));
             return nameTempArr;
         }
 
-        private void changeName(String[] userTempName){
+        private void changeName(ArrayList userTempName){
             int nameX = 522;
             int nameY = 68;
             // 기존에 추가된 이름 JLabel 제거
@@ -394,8 +396,8 @@ public class GamePlay extends JFrame {
             }
 
             // 서버에서 전송된 유저 이름 추가
-            for (int i = 0; i < userTempName.length; i++) {
-                JLabel nameJL = new JLabel(userTempName[i]);
+            for (int i = 0; i < userTempName.size(); i++) {
+                JLabel nameJL = new JLabel(String.valueOf(userTempName.get(i)));
                 nameJL.setBounds(nameX, nameY, 60, 60);
                 backgroundPanel.add(nameJL);
                 nameX += 45;
