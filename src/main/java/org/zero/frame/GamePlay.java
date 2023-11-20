@@ -219,13 +219,12 @@ public class GamePlay extends JFrame {
 
     private void sendMessage() {
         String message = messageField.getText();
-        writer.println(message);
-        if (message.replaceAll(" ", "").contains(currentTopic)) {
-            //changeCurrentTopic();// 현재 주제 변경
+        if (message != null && message.replaceAll(" ", "").equals(currentTopic)) {
+            changeCurrentTopic();// 현재 주제 변경
         }
+        writer.println(message);
         writer.flush();
         messageField.setText("");
-
     }
 
     private void focusRecentChat(JScrollPane scrollPane) {
@@ -478,6 +477,7 @@ public class GamePlay extends JFrame {
 
 
     public static void main(String[] args) {
-       new GamePlay(userName);
+        String userName = "흥";
+        new GamePlay(userName);
     }
 }
