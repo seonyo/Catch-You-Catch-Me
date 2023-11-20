@@ -47,7 +47,7 @@ public class GamePlay extends JFrame {
     private static PreparedStatement ps = null;
     private static ResultSet rs = null;
     private static JLabel categoryContentJL = null;// 현재 제시어
-    private String currentTopic;// 현재 주제
+    private static String currentTopic;// 현재 주제
     private int prevMax = 0; // 이전 최대 값
     public static int userCnt = 0;// 현재 유저 수
     private static int readyUserCnt = 0;
@@ -65,6 +65,9 @@ public class GamePlay extends JFrame {
     private static String currentTime;// 현재 시간
     private static String userTempName[];
     private static JLabel categoryJL;
+    private static boolean clearExecuted = false;
+    private static int rightCnt = 0;
+
 
     public GamePlay(String userName) {
 
@@ -121,6 +124,8 @@ public class GamePlay extends JFrame {
                         case 9:
                             drawingPanel.clearDrawing();
                             vector.clear();
+                            writer.println("clear");
+                            writer.flush();
                             break;
                     }
                 }
@@ -198,7 +203,7 @@ public class GamePlay extends JFrame {
         connectToServer();
     }
 
-    private static void connectToServer() {
+    private void connectToServer() {
         try {
             Socket socket = new Socket("localhost", 8090);
             writer = new PrintWriter(socket.getOutputStream());
@@ -206,7 +211,7 @@ public class GamePlay extends JFrame {
             writer.println("user:" + userName);
             writer.flush();
 
-            Thread readerThread = new Thread(new GamePlay.IncomingReader(socket));
+            Thread readerThread = new Thread(new GamePlay.IncomingReader(socket, this));
             readerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -215,13 +220,16 @@ public class GamePlay extends JFrame {
 
     private void sendMessage() {
         String message = messageField.getText();
+        System.out.println(currentTopic);
         writer.println(message);
-        if (message.replaceAll(" ", "").contains(currentTopic)) {
-            //changeCurrentTopic();// 현재 주제 변경
-        }
         writer.flush();
         messageField.setText("");
 
+        if (message.equals(currentTopic)) {
+            writer.println("right");
+            writer.flush();
+            changeCurrentTopic();// 현재 주제 변경
+        }
     }
 
     private void focusRecentChat(JScrollPane scrollPane) {
@@ -254,14 +262,16 @@ public class GamePlay extends JFrame {
 
     // 현재 주제 정하기
     private static String setCurrentTopic(String currentTopic) {
+        System.out.println(currentTopic);
         if(userCnt!=4){
             backgroundPanel.add(categoryJL);
-            categoryContentJL.setText(currentTopic.substring(8));
+            categoryContentJL.setText(currentTopic);
             backgroundPanel.add(categoryContentJL);
             backgroundPanel.revalidate();
             backgroundPanel.repaint();
+            return currentTopic;
         }
-        return currentTopic.substring(8);
+        return "";
     }
 
 
@@ -269,16 +279,21 @@ public class GamePlay extends JFrame {
     // 맞추거나 패스했을 경우, 새 주제 정하기
     private void changeCurrentTopic() {
         writer.println("[ 정답: " + currentTopic + " ]");
-        this.currentTopic = setCurrentTopic(this.currentTopic);
-        categoryContentJL.setText(this.currentTopic);
+        writer.flush();
+        writer.println("topic");
+        writer.flush();
+        //currentTopic = setCurrentTopic(this.currentTopic);
+        //categoryContentJL.setText(this.currentTopic);
     }
 
     static class IncomingReader implements Runnable {
         private Socket socket;
         private Scanner scanner;
+        private GamePlay gamePlayInstance;
 
-        public IncomingReader(Socket socket) {
+        public IncomingReader(Socket socket, GamePlay gamePlayInstance) {
             this.socket = socket;
+            this.gamePlayInstance = gamePlayInstance;
         }
 
         @Override
@@ -290,8 +305,7 @@ public class GamePlay extends JFrame {
                     if (message.startsWith("draw:")) {
                         processDrawingMessage(message);
                     } else if (message.equals("clear")) {
-                        System.out.println("야야야");
-                        processClearMessage(message);
+                        processClearMessage();
                     } else if(message.startsWith("userCnt:")){
                         System.out.println(message);
                         userCnt = Integer.parseInt(message.substring(8));
@@ -301,35 +315,61 @@ public class GamePlay extends JFrame {
                     else if(message.startsWith("userName")) {
                         userTempName = processAddName(message.substring(11));
                         changeName(userTempName);
-                    } else if(message.startsWith("Topic")){
-                        if(userCnt!=4){
-                            setCurrentTopic(message);
+                    } else if(message.startsWith("Topic")) {
+                        currentTopic = message.substring(8);
+                        if (userCnt != 4) {
+                            setCurrentTopic(currentTopic);
+                        }
+                    } else if(message.equals("repaint")){
+                        System.out.println("hello");
+                        processRepaint();
+                    } else if(message.startsWith("right")){
+                        rightCnt = Integer.parseInt(message.substring(8));
+
+                        if(rightCnt == 8) {
+                            gameEnd();
                         }
                     }
-
                     else {
                         chatArea.append(message + "\n");
                     }
-                    {
-                    }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        private void gameEnd(){
+            gamePlayInstance.dispose();
+            new GameEnd();
+        }
+        private void processRepaint(){
+            backgroundPanel.add(drawingPanel);
+        }
         private void processDrawingMessage(String message) {
-            String[] parts = message.substring(5).split(",");
-            int x1 = Integer.parseInt(parts[0]);
-            int y1 = Integer.parseInt(parts[1]);
-            int x2 = Integer.parseInt(parts[2]);
-            int y2 = Integer.parseInt(parts[3]);
-            Color color = new Color(Integer.parseInt(parts[4]));
-            int penSize = Integer.parseInt(parts[5]);
-            drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            if (drawingPanel != null) {
+                String[] parts = message.substring(5).split(",");
+                int x1 = Integer.parseInt(parts[0]);
+                int y1 = Integer.parseInt(parts[1]);
+                int x2 = Integer.parseInt(parts[2]);
+                int y2 = Integer.parseInt(parts[3]);
+                Color color = new Color(Integer.parseInt(parts[4]));
+                int penSize = Integer.parseInt(parts[5]);
+                drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            }
         }
 
-        private void processClearMessage(String message){
-            drawingPanel.clearDrawing();
+        private void processClearMessage(){
+            if (!clearExecuted) {
+                if (drawingPanel != null) {
+                    drawingPanel.clearDrawing();
+
+                    writer.println("clear");
+                    writer.flush();
+                }
+                clearExecuted = true;
+            }
         }
 
         private void processTimeMessage(String message){
@@ -366,9 +406,7 @@ public class GamePlay extends JFrame {
                 }
             }
 
-            // 패널을 다시 그리도록 갱신
-            backgroundPanel.revalidate();
-            backgroundPanel.repaint();
+
         }
     }
 
@@ -461,6 +499,7 @@ public class GamePlay extends JFrame {
 
 
     public static void main(String[] args) {
+        String userName = "흥";
         new GamePlay(userName);
     }
 }
