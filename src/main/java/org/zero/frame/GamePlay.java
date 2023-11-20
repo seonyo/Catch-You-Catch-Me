@@ -46,7 +46,7 @@ public class GamePlay extends JFrame {
     public static Statement stmt = null;
     private static PreparedStatement ps = null;
     private static ResultSet rs = null;
-    private JLabel categoryContentJL = null;// 현재 제시어
+    private static JLabel categoryContentJL = null;// 현재 제시어
     private String currentTopic;// 현재 주제
     private int prevMax = 0; // 이전 최대 값
     public static int userCnt = 0;// 현재 유저 수
@@ -64,6 +64,7 @@ public class GamePlay extends JFrame {
     private static int t = 0;
     private static String currentTime;// 현재 시간
     private static String userTempName[];
+    private static JLabel categoryJL;
 
     public GamePlay(String userName) {
 
@@ -143,15 +144,12 @@ public class GamePlay extends JFrame {
         backgroundPanel.add(exitBtn);
 
         //제시어 Label 추가 코드
-        JLabel categoryJL = new JLabel("제시어");
+        categoryJL = new JLabel("제시어");
         categoryJL.setForeground(new Color(89, 89, 89));
         categoryJL.setBounds(540, 358, 200, 50);
         categoryJL.setFont(semiMidFont);
-        backgroundPanel.add(categoryJL);
 
-        this.currentTopic = setCurrentTopic(this.currentTopic);
         categoryContentJL = new JLabel(this.currentTopic);
-        saveCurrentTopic(this.currentTopic);
         categoryContentJL.setHorizontalAlignment(JLabel.CENTER);
         categoryContentJL.setForeground(new Color(0, 0, 0));
         categoryContentJL.setBounds(513, 392, 100, 50);
@@ -161,8 +159,10 @@ public class GamePlay extends JFrame {
         // 문제 바꾸는 코드
         JButton changeBtn = new JButton("문제변경");
         changeBtn.addActionListener(e -> {
-            this.currentTopic = setCurrentTopic(this.currentTopic);
-            categoryContentJL.setText(this.currentTopic);
+            writer.println("topic");
+            writer.flush();
+            //this.currentTopic = setCurrentTopic(this.currentTopic);
+            //categoryContentJL.setText(this.currentTopic);
         });
         changeBtn.setBounds(616, 368, 90, 30);
         changeBtn.setBackground(new Color(255, 228, 131));
@@ -217,7 +217,7 @@ public class GamePlay extends JFrame {
         String message = messageField.getText();
         writer.println(message);
         if (message.replaceAll(" ", "").contains(currentTopic)) {
-            changeCurrentTopic();// 현재 주제 변경
+            //changeCurrentTopic();// 현재 주제 변경
         }
         writer.flush();
         messageField.setText("");
@@ -254,61 +254,21 @@ public class GamePlay extends JFrame {
 
     // 현재 주제 정하기
     private static String setCurrentTopic(String currentTopic) {
-        try {
-            conn = getConnection(DB.MySQL.JDBC_URL);
-            stmt = conn.createStatement();
-
-            // 현재 주제 정하기
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM topic");
-
-            // 현재 topic table의 사이즈 구하기
-            int rowCount = 0;
-            while (rs.next()) {
-                rowCount = Integer.parseInt(rs.getString("count(*)"));
-            }
-
-            // 난수 생성
-            double random = Math.random();
-            int randomValue = (int) (random * rowCount + 1);
-
-            // 랜덤 주제 가져오기
-            rs = stmt.executeQuery("SELECT * FROM topic WHERE id = " + randomValue);
-            while (rs.next())
-                currentTopic = rs.getString("name");
-            System.out.println(currentTopic);
-
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("주제 불러오기 실패");
-        }
-
-        return currentTopic;
+        backgroundPanel.add(categoryJL);
+        categoryContentJL.setText(currentTopic.substring(8));
+        backgroundPanel.add(categoryContentJL);
+        backgroundPanel.revalidate();
+        backgroundPanel.repaint();
+        return currentTopic.substring(8);
     }
 
-    // 정한 주제 db에 저장
-    private static void saveCurrentTopic(String currentTopic) {
-        try {
-            conn = getConnection(DB.MySQL.JDBC_URL);
-            stmt = conn.createStatement();
 
-            String query = "INSERT INTO current_topic (name) VALUES ('" + currentTopic + "')";
-            stmt.executeUpdate(query);
-
-            // 사용 후 close
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("현재 주제 db에 저장 실패");
-        }
-    }
 
     // 맞추거나 패스했을 경우, 새 주제 정하기
     private void changeCurrentTopic() {
         writer.println("[ 정답: " + currentTopic + " ]");
         this.currentTopic = setCurrentTopic(this.currentTopic);
         categoryContentJL.setText(this.currentTopic);
-        saveCurrentTopic(this.currentTopic);
     }
 
     static class IncomingReader implements Runnable {
