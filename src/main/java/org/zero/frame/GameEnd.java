@@ -48,11 +48,11 @@ public class GameEnd extends JFrame {
 //        backgroundPanel.add(time);
 
         JLabel c = new JLabel(" : ");
-//        JLabel minute = new JLabel(currentTime.substring(8,10));
-//        JLabel second = new JLabel(currentTime.substring(12,14));
+        JLabel minute = new JLabel(currentTime.substring(8,10));
+        JLabel second = new JLabel(currentTime.substring(12,14));
 
-        JLabel minute = new JLabel("00");
-        JLabel second = new JLabel("11");
+//        JLabel minute = new JLabel("00");
+//        JLabel second = new JLabel("11");
 
         c.setFont(timeFont);
         c.setForeground(new Color(142,110,0));
@@ -73,7 +73,7 @@ public class GameEnd extends JFrame {
 
         for(int i=0; i<userTempName.size(); i++){
             JLabel nameLabel = new JLabel(userTempName.get(i));
-            nameLabel.setBounds(x,y,80,35);
+            nameLabel.setBounds(x,y,180,35);
             nameLabel.setForeground(new Color(79, 62, 2));
             nameLabel.setFont(semiLargeFont);
             backgroundPanel.add(nameLabel);
