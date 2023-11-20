@@ -325,10 +325,10 @@ public class GamePlay extends JFrame {
                         processRepaint();
                     } else if(message.startsWith("right")){
                         rightCnt = Integer.parseInt(message.substring(8));
-
                         if(rightCnt == 8) {
                             gameEnd();
                         }
+                        processRepaint();
                     }
                     else {
                         chatArea.append(message + "\n");
@@ -344,6 +344,8 @@ public class GamePlay extends JFrame {
             new GameEnd(currentTime, nameTempArr);
         }
         private void processRepaint(){
+            backgroundPanel.revalidate();
+            backgroundPanel.repaint();
             backgroundPanel.add(drawingPanel);
         }
         private void processDrawingMessage(String message) {
