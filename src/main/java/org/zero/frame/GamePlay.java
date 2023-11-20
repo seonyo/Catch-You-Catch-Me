@@ -254,11 +254,13 @@ public class GamePlay extends JFrame {
 
     // 현재 주제 정하기
     private static String setCurrentTopic(String currentTopic) {
-        backgroundPanel.add(categoryJL);
-        categoryContentJL.setText(currentTopic.substring(8));
-        backgroundPanel.add(categoryContentJL);
-        backgroundPanel.revalidate();
-        backgroundPanel.repaint();
+        if(userCnt!=4){
+            backgroundPanel.add(categoryJL);
+            categoryContentJL.setText(currentTopic.substring(8));
+            backgroundPanel.add(categoryContentJL);
+            backgroundPanel.revalidate();
+            backgroundPanel.repaint();
+        }
         return currentTopic.substring(8);
     }
 
@@ -300,8 +302,9 @@ public class GamePlay extends JFrame {
                         userTempName = processAddName(message.substring(11));
                         changeName(userTempName);
                     } else if(message.startsWith("Topic")){
-                        System.out.println(message);
-                        setCurrentTopic(message);
+                        if(userCnt!=4){
+                            setCurrentTopic(message);
+                        }
                     }
 
                     else {
