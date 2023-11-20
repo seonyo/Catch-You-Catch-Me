@@ -301,21 +301,26 @@ public class GamePlay extends JFrame {
                     else if(message.startsWith("userName")) {
                         userTempName = processAddName(message.substring(11));
                         changeName(userTempName);
-                    } else if(message.startsWith("Topic")){
-                        if(userCnt!=4){
+                    } else if(message.startsWith("Topic")) {
+                        if (userCnt != 4) {
                             setCurrentTopic(message);
                         }
+                    } else if(message.equals("repaint")){
+                        System.out.println("hello");
+                        processRepaint();
                     }
 
                     else {
                         chatArea.append(message + "\n");
                     }
-                        {
-                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        private void processRepaint(){
+            backgroundPanel.add(drawingPanel);
         }
         private void processDrawingMessage(String message) {
             String[] parts = message.substring(5).split(",");
@@ -366,9 +371,7 @@ public class GamePlay extends JFrame {
                 }
             }
 
-            // 패널을 다시 그리도록 갱신
-            backgroundPanel.revalidate();
-            backgroundPanel.repaint();
+
         }
     }
 
