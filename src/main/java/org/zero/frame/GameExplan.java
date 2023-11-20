@@ -43,7 +43,6 @@ public class GameExplan extends JFrame{
 		JButton gamestartBtn = new JButton("게임시작");
 		gamestartBtn.setBounds(510,400, 170, 45);
 		gamestartBtn.setBackground(new Color(255,228,131));
-		gamestartBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), 2.0f));
 		gamestartBtn.setForeground(new Color(168, 131, 0));
 		gamestartBtn.setFont(midFont);
 		backgroundPanel.add(gamestartBtn);

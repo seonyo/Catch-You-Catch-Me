@@ -130,21 +130,6 @@ public class GamePlay extends JFrame {
             pancelP.add(label);
         }
 
-        JButton exitBtn = new JButton("나가기");
-        exitBtn.addActionListener(e -> {
-            int result = JOptionPane.showConfirmDialog(null, "정말 게임을 종료하시겠습니까?");
-            if (result == JOptionPane.YES_OPTION) {
-                this.setVisible(false);
-                new Main();
-            }
-        });
-
-        exitBtn.setBounds(616, 411, 90, 30);
-        exitBtn.setBackground(new Color(255, 228, 131));
-        exitBtn.setForeground(new Color(142, 110, 0));
-        exitBtn.setFont(semiMidFont);
-        backgroundPanel.add(exitBtn);
-
         //제시어 Label 추가 코드
         categoryJL = new JLabel("제시어");
         categoryJL.setForeground(new Color(89, 89, 89));
@@ -330,7 +315,6 @@ public class GamePlay extends JFrame {
                     else {
                         chatArea.append(message + "\n");
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
