@@ -65,6 +65,8 @@ public class GamePlay extends JFrame {
     private static String currentTime;// 현재 시간
     private static String userTempName[];
     private static JLabel categoryJL;
+    private static boolean clearExecuted = false;
+
 
     public GamePlay(String userName) {
 
@@ -121,6 +123,8 @@ public class GamePlay extends JFrame {
                         case 9:
                             drawingPanel.clearDrawing();
                             vector.clear();
+                            writer.println("clear");
+                            writer.flush();
                             break;
                     }
                 }
@@ -260,8 +264,9 @@ public class GamePlay extends JFrame {
             backgroundPanel.add(categoryContentJL);
             backgroundPanel.revalidate();
             backgroundPanel.repaint();
+            return currentTopic.substring(8);
         }
-        return currentTopic.substring(8);
+        return "";
     }
 
 
@@ -290,8 +295,7 @@ public class GamePlay extends JFrame {
                     if (message.startsWith("draw:")) {
                         processDrawingMessage(message);
                     } else if (message.equals("clear")) {
-                        System.out.println("야야야");
-                        processClearMessage(message);
+                        processClearMessage();
                     } else if(message.startsWith("userCnt:")){
                         System.out.println(message);
                         userCnt = Integer.parseInt(message.substring(8));
@@ -323,18 +327,28 @@ public class GamePlay extends JFrame {
             backgroundPanel.add(drawingPanel);
         }
         private void processDrawingMessage(String message) {
-            String[] parts = message.substring(5).split(",");
-            int x1 = Integer.parseInt(parts[0]);
-            int y1 = Integer.parseInt(parts[1]);
-            int x2 = Integer.parseInt(parts[2]);
-            int y2 = Integer.parseInt(parts[3]);
-            Color color = new Color(Integer.parseInt(parts[4]));
-            int penSize = Integer.parseInt(parts[5]);
-            drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            if (drawingPanel != null) {
+                String[] parts = message.substring(5).split(",");
+                int x1 = Integer.parseInt(parts[0]);
+                int y1 = Integer.parseInt(parts[1]);
+                int x2 = Integer.parseInt(parts[2]);
+                int y2 = Integer.parseInt(parts[3]);
+                Color color = new Color(Integer.parseInt(parts[4]));
+                int penSize = Integer.parseInt(parts[5]);
+                drawingPanel.drawLine(x1, y1, x2, y2, color, penSize);
+            }
         }
 
-        private void processClearMessage(String message){
-            drawingPanel.clearDrawing();
+        private void processClearMessage(){
+            if (!clearExecuted) {
+                if (drawingPanel != null) {
+                    drawingPanel.clearDrawing();
+
+                    writer.println("clear");
+                    writer.flush();
+                }
+                clearExecuted = true;
+            }
         }
 
         private void processTimeMessage(String message){
