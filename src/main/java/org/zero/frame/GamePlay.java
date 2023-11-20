@@ -159,8 +159,10 @@ public class GamePlay extends JFrame {
         // 문제 바꾸는 코드
         JButton changeBtn = new JButton("문제변경");
         changeBtn.addActionListener(e -> {
-            this.currentTopic = setCurrentTopic(this.currentTopic);
-            categoryContentJL.setText(this.currentTopic);
+            writer.println("topic");
+            writer.flush();
+            //this.currentTopic = setCurrentTopic(this.currentTopic);
+            //categoryContentJL.setText(this.currentTopic);
         });
         changeBtn.setBounds(616, 368, 90, 30);
         changeBtn.setBackground(new Color(255, 228, 131));
