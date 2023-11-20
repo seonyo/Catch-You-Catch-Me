@@ -330,6 +330,7 @@ public class GamePlay extends JFrame {
                     else {
                         chatArea.append(message + "\n");
                     }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
