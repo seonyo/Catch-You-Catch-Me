@@ -66,6 +66,7 @@ public class GamePlay extends JFrame {
     private static String userTempName[];
     private static JLabel categoryJL;
     private static boolean clearExecuted = false;
+    private static int rightCnt = 0;
 
 
     public GamePlay(String userName) {
@@ -202,7 +203,7 @@ public class GamePlay extends JFrame {
         connectToServer();
     }
 
-    private static void connectToServer() {
+    private void connectToServer() {
         try {
             Socket socket = new Socket("localhost", 8090);
             writer = new PrintWriter(socket.getOutputStream());
@@ -210,7 +211,7 @@ public class GamePlay extends JFrame {
             writer.println("user:" + userName);
             writer.flush();
 
-            Thread readerThread = new Thread(new GamePlay.IncomingReader(socket));
+            Thread readerThread = new Thread(new GamePlay.IncomingReader(socket, this));
             readerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -225,7 +226,8 @@ public class GamePlay extends JFrame {
         messageField.setText("");
 
         if (message.equals(currentTopic)) {
-            System.out.println("굿");
+            writer.println("right");
+            writer.flush();
             changeCurrentTopic();// 현재 주제 변경
         }
     }
@@ -287,9 +289,11 @@ public class GamePlay extends JFrame {
     static class IncomingReader implements Runnable {
         private Socket socket;
         private Scanner scanner;
+        private GamePlay gamePlayInstance;
 
-        public IncomingReader(Socket socket) {
+        public IncomingReader(Socket socket, GamePlay gamePlayInstance) {
             this.socket = socket;
+            this.gamePlayInstance = gamePlayInstance;
         }
 
         @Override
@@ -319,8 +323,13 @@ public class GamePlay extends JFrame {
                     } else if(message.equals("repaint")){
                         System.out.println("hello");
                         processRepaint();
-                    }
+                    } else if(message.startsWith("right")){
+                        rightCnt = Integer.parseInt(message.substring(8));
 
+                        if(rightCnt == 8) {
+                            gameEnd();
+                        }
+                    }
                     else {
                         chatArea.append(message + "\n");
                     }
@@ -330,6 +339,10 @@ public class GamePlay extends JFrame {
             }
         }
 
+        private void gameEnd(){
+            gamePlayInstance.dispose();
+            new GameEnd();
+        }
         private void processRepaint(){
             backgroundPanel.add(drawingPanel);
         }
