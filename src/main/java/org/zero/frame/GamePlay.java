@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Vector;
+import java.util.*;
 
 import static org.zero.common.CommonUtil.*;
 import static org.zero.db.ConnectionMgr.getConnection;
@@ -164,10 +161,8 @@ public class GamePlay extends JFrame {
         // 문제 바꾸는 코드
         JButton changeBtn = new JButton("문제변경");
         changeBtn.addActionListener(e -> {
-            writer.println("topic");
+            writer.println("topic_change");
             writer.flush();
-            //this.currentTopic = setCurrentTopic(this.currentTopic);
-            //categoryContentJL.setText(this.currentTopic);
         });
         changeBtn.setBounds(616, 368, 90, 30);
         changeBtn.setBackground(new Color(255, 228, 131));
@@ -329,6 +324,8 @@ public class GamePlay extends JFrame {
                             gameEnd();
                         }
                         processRepaint();
+                    } else if(message.equals("NotChange")){
+                        JOptionPane.showMessageDialog(null, "한 번 이상 문제를 바꿀 수 없습니다.","error", JOptionPane.ERROR_MESSAGE);
                     }
                     else {
                         chatArea.append(message + "\n");
