@@ -339,7 +339,11 @@ public class GamePlay extends JFrame {
                     else if(message.startsWith("userName")) {
                         userTempName = processAddName(message.substring(11));
                         changeName(userTempName);
+                    } else if(message.startsWith("Topic")){
+                        System.out.println(message);
+                        setCurrentTopic(message);
                     }
+
                     else {
                         chatArea.append(message + "\n");
                     }
