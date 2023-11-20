@@ -48,9 +48,6 @@ public class Main extends JFrame{
 
 		//버튼 테두리 둥글게
 		float borderWidth = 2.0f;
-		rankingBtn.setBorder(new RoundBorder(30, new Color(255,228,131), borderWidth));
-		gamestartBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), borderWidth));
-		explanBtn.setBorder(new RoundBorder(30, new Color(255,228,131), borderWidth));
 
 		//버튼 폰트 설정
 		rankingBtn.setFont(midFont);

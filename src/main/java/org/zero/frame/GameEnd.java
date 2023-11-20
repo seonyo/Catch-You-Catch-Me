@@ -84,7 +84,6 @@ public class GameEnd extends JFrame {
         JButton rankingBtn = new JButton("랭킹보기");
         rankingBtn.setBounds(180,342, 170, 45);
         rankingBtn.setBackground(new Color(255,228,131));
-        rankingBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), 2.0f));
         rankingBtn.setForeground(new Color(168, 131, 0));
         rankingBtn.setFont(midFont);
         backgroundPanel.add(rankingBtn);
@@ -98,7 +97,6 @@ public class GameEnd extends JFrame {
         JButton exitBtn = new JButton("나가기");
         exitBtn.setBounds(400,342, 170, 45);
         exitBtn.setBackground(new Color(255,255,255));
-        exitBtn.setBorder(new RoundBorder(30, new Color(255, 228, 131), 2.0f));
         exitBtn.setForeground(new Color(142, 110, 0));
         exitBtn.setFont(midFont);
         backgroundPanel.add(exitBtn);
