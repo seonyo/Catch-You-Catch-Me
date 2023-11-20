@@ -4,6 +4,7 @@ import org.zero.common.CommonUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,11 +15,15 @@ public class GameEnd extends JFrame {
     Image background = new ImageIcon(Main.class.getResource("/static/img/backGround.png")).getImage();
     Image clock = new ImageIcon(Main.class.getResource("/static/img/clockIcon.png")).getImage();
 
-    public GameEnd(){
+    public GameEnd(String currentTime, ArrayList<String> userTempName){
         CommonUtil.settings(this);
         backgroundPanel = CommonUtil.makeBackground(backgroundPanel, background);
 
         add(backgroundPanel);
+
+        System.out.println(currentTime);
+        System.out.println(userTempName);
+
 
         //clock 이미지 추가
         JPanel clockPanel = new JPanel() {
@@ -81,5 +86,7 @@ public class GameEnd extends JFrame {
 
     }
 
-    public static void main(String args[]) {new GameEnd();}
+    public static void main(String args[]) {
+        ArrayList <String> temp = new ArrayList<>();
+        new GameEnd("a", temp);}
 }
