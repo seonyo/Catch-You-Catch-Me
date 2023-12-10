@@ -21,3 +21,5 @@
 
 ## 🎥 Video
 [![Video Label](http://img.youtube.com/vi/9DA_QAIHoG8/0.jpg)](https://youtu.be/9DA_QAIHoG8)
+
+이미지를 클릭하면 시연영상으로 넘어갑니다
