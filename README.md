@@ -11,8 +11,13 @@
 - **Database** : MySQL
 - **Tool** : IntelliJ
 
+## 🙏 Role
+|노하은|정선영|
+|---|---|
+|DB, 서버|디자인, 프론트, 서버|
+
 ## 💄 Design
 👉 [피그마 보러가기](https://www.figma.com/file/RqdXIGfHfRenAWGzKcrczF/CatchYourCatchMe?type=design&node-id=0-1&mode=design&t=jwDtoAdwAENtteGM-0)
 
 ## 🎥 Video
-
+[![Video Label](http://img.youtube.com/vi/9DA_QAIHoG8/0.jpg)](https://youtu.be/9DA_QAIHoG8)
